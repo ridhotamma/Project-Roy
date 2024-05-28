@@ -5,7 +5,7 @@ from app.models.user_ig_post import UserIGPost
 from app.models.user_ig_story import UserIGStory
 
 class UserIGSchedule(BaseModel):
-    action_type: str = Field(..., regex=r'^(post_content|post_story)$')
+    action_type: str = Field(..., pattern=r'^(post_content|post_story)$')
     username: str = Field(..., min_length=3, max_length=50)
     scheduled_item: Union[UserIGPost, UserIGStory]
     scheduled_time: datetime
