@@ -1,1 +1,0 @@
-from .update_proxy import start_background_update
