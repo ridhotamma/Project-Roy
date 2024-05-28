@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from app.models.user_ig import UserIG
-from app.crud import user as crud_user
+from app.crud import user_ig as crud_user
 
 router = APIRouter()
 

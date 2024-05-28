@@ -11,3 +11,6 @@ def get_post_collection():
 
 def get_story_collection():
     return db['stories']
+
+def get_schedule_collection():
+    return db['schedules']

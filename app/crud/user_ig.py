@@ -3,7 +3,6 @@ from app.database import get_user_collection
 from app.models.user_ig import UserIG
 from fastapi import HTTPException
 
-
 def create_user(user: UserIG):
     user_collection = get_user_collection()
     try:
@@ -12,7 +11,6 @@ def create_user(user: UserIG):
     except DuplicateKeyError:
         raise HTTPException(status_code=400, detail="Username already exists")
 
-
 def get_user(username: str):
     user_collection = get_user_collection()
     user = user_collection.find_one({"username": username})
@@ -20,15 +18,12 @@ def get_user(username: str):
         return UserIG(**user)
     raise HTTPException(status_code=404, detail="User not found")
 
-
 def update_user(username: str, user: UserIG):
     user_collection = get_user_collection()
-    result = user_collection.update_one(
-        {"username": username}, {"$set": user.dict()})
+    result = user_collection.update_one({"username": username}, {"$set": user.dict()})
     if result.matched_count:
         return user
     raise HTTPException(status_code=404, detail="User not found")
-
 
 def delete_user(username: str):
     user_collection = get_user_collection()
