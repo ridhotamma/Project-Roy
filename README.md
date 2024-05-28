@@ -1,1 +1,1 @@
-## Social Media Post Automation - Project Roy V1
+## Social Media Post Automation
