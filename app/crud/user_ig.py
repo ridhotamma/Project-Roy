@@ -8,7 +8,7 @@ def create_user(user: UserIG):
     user_collection = get_user_collection()
 
     existing_user = user_collection.find_one({"username": user.username})
-    
+
     if existing_user:
         raise HTTPException(status_code=400, detail="Username already exists")
     try:
@@ -26,9 +26,7 @@ def get_users(skip: int = 0, limit: int = 10) -> PaginatedResponse:
     current_page = skip // limit + 1
 
     metadata = PaginationMetadata(
-        total=total,
-        current_page=current_page,
-        page_size=limit
+        total=total, current_page=current_page, page_size=limit
     )
 
     return PaginatedResponse(metadata=metadata, data=users)
@@ -44,8 +42,7 @@ def get_user(username: str):
 
 def update_user(username: str, user: UserIG):
     user_collection = get_user_collection()
-    result = user_collection.update_one(
-        {"username": username}, {"$set": user.dict()})
+    result = user_collection.update_one({"username": username}, {"$set": user.dict()})
     if result.matched_count:
         return user
     raise HTTPException(status_code=404, detail="User not found")

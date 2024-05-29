@@ -21,7 +21,7 @@ class AuthUser(BaseModel):
                 "password": "securepassword",
                 "created_at": "2024-01-01T00:00:00Z",
                 "updated_at": "2024-01-01T00:00:00Z",
-                "profile_picture": "http://example.com/profile.jpg"
+                "profile_picture": "http://example.com/profile.jpg",
             }
         }
 

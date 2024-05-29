@@ -1,6 +1,10 @@
 from pymongo.errors import DuplicateKeyError
 from app.database import get_schedule_collection
-from app.models.user_ig_schedule import UserIGSchedule, PaginatedResponse, PaginationMetadata
+from app.models.user_ig_schedule import (
+    UserIGSchedule,
+    PaginatedResponse,
+    PaginationMetadata,
+)
 from fastapi import HTTPException
 
 
@@ -17,15 +21,12 @@ def get_schedules(skip: int = 0, limit: int = 10) -> PaginatedResponse:
     schedule_collection = get_schedule_collection()
     total = schedule_collection.count_documents({})
     user_schedules_cursor = schedule_collection.find().skip(skip).limit(limit)
-    user_schedules = [UserIGSchedule(**schedule)
-                      for schedule in user_schedules_cursor]
+    user_schedules = [UserIGSchedule(**schedule) for schedule in user_schedules_cursor]
 
     current_page = skip // limit + 1
 
     metadata = PaginationMetadata(
-        total=total,
-        current_page=current_page,
-        page_size=limit
+        total=total, current_page=current_page, page_size=limit
     )
 
     return PaginatedResponse(metadata=metadata, data=user_schedules)
@@ -42,7 +43,8 @@ def get_schedule(username: str):
 def update_schedule(username: str, schedule: UserIGSchedule):
     schedule_collection = get_schedule_collection()
     result = schedule_collection.update_one(
-        {"username": username}, {"$set": schedule.model_dump()})
+        {"username": username}, {"$set": schedule.model_dump()}
+    )
     if result.matched_count:
         return schedule
     raise HTTPException(status_code=404, detail="Schedule not found")

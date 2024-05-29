@@ -14,16 +14,14 @@ def create_post(post: UserIGPost):
 
 
 def get_stories(skip: int = 0, limit: int = 10) -> PaginatedResponse:
-    story_collection =  get_post_collection()
+    story_collection = get_post_collection()
     total = story_collection.count_documents({})
     user_posts_cursor = story_collection.find().skip(skip).limit(limit)
     user_posts = [UserIGPost(**post) for post in user_posts_cursor]
     current_page = skip // limit + 1
 
     metadata = PaginationMetadata(
-        total=total,
-        current_page=current_page,
-        page_size=limit
+        total=total, current_page=current_page, page_size=limit
     )
 
     return PaginatedResponse(metadata=metadata, data=user_posts)
@@ -39,8 +37,7 @@ def get_post(username: str):
 
 def update_post(username: str, post: UserIGPost):
     post_collection = get_post_collection()
-    result = post_collection.update_one(
-        {"username": username}, {"$set": post.dict()})
+    result = post_collection.update_one({"username": username}, {"$set": post.dict()})
     if result.matched_count:
         return post
     raise HTTPException(status_code=404, detail="Post not found")

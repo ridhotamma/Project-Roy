@@ -25,7 +25,8 @@ def login(username, password):
                 cl.get_timeline_feed()
             except LoginRequired:
                 logger.info(
-                    "Session is invalid, need to login via username and password")
+                    "Session is invalid, need to login via username and password"
+                )
 
                 old_settings = cl.get_settings()
 
@@ -36,18 +37,17 @@ def login(username, password):
                 cl.login(username, password)
             login_via_session = True
         except Exception as e:
-            logger.info(
-                "Couldn't login user using session information: %s" % e)
+            logger.info("Couldn't login user using session information: %s" % e)
 
     if not login_via_session:
         try:
             logger.info(
-                "Attempting to login via username and password. username: %s" % username)
+                "Attempting to login via username and password. username: %s" % username
+            )
             if cl.login(username, password):
                 login_via_pw = True
         except Exception as e:
-            logger.info(
-                "Couldn't login user using username and password: %s" % e)
+            logger.info("Couldn't login user using username and password: %s" % e)
 
     if not login_via_pw and not login_via_session:
         raise Exception("Couldn't login user with either password or session")

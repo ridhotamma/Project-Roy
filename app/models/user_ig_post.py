@@ -12,7 +12,7 @@ class UserIGPost(BaseModel):
             "example": {
                 "username": "johndoe",
                 "photo_path": "path/to/photo.jpg",
-                "caption": "This is a caption"
+                "caption": "This is a caption",
             }
         }
 

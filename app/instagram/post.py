@@ -7,9 +7,9 @@ def post_image_story(cl, photo_path):
 
 
 def post_video_story(cl, video_path):
-    buildout = StoryBuilder(
-        path=video_path,
-    ).video(15)  # seconds
+    buildout = StoryBuilder(path=video_path,).video(
+        15
+    )  # seconds
 
     result = cl.video_upload_to_story(
         buildout.path,

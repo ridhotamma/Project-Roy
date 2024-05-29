@@ -5,6 +5,7 @@ annotated-types==0.7.0
 anyio==4.4.0
 asyncio==3.4.3
 attrs==22.2.0
+black==24.4.2
 cachetools==5.3.3
 certifi==2024.2.2
 cffi==1.16.0
@@ -43,11 +44,13 @@ mdurl==0.1.2
 mock==5.1.0
 moviepy==1.0.3
 multidict==6.0.5
+mypy-extensions==1.0.0
 nodeenv==1.9.0
 numpy==1.26.4
 orjson==3.10.3
 packaging==24.0
 passlib==1.7.4
+pathspec==0.12.1
 pillow==10.3.0
 platformdirs==4.2.2
 pluggy==1.5.0
