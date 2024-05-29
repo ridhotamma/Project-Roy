@@ -1,12 +1,13 @@
 from datetime import datetime, timezone, timedelta
+from typing import Optional, Dict
+
 from pymongo import ReturnDocument
 from fastapi.exceptions import HTTPException
 from fastapi import status
 from app.auth.utils import hash_password, verify_password
 from app.auth.jwt import create_access_token, create_refresh_token
-from app.models.auth_user import AuthUser
+from app.models.auth_user import AuthUser, PaginatedResponse, PaginationMetadata
 from app.database import get_auth_user_collection
-from typing import Optional, Dict
 
 
 def create_user(user: AuthUser) -> AuthUser:
@@ -14,6 +15,20 @@ def create_user(user: AuthUser) -> AuthUser:
     user.password = hash_password(user.password)
     user_collection.insert_one(user.dict())
     return user
+
+
+def get_auth_users(skip: int, limit: int) -> PaginatedResponse:
+    user_collection = get_auth_user_collection()
+    total = user_collection.count_documents({})
+    users_cursor = user_collection.find().skip(skip).limit(limit)
+    users = [AuthUser(**user) for user in users_cursor]
+    current_page = skip // limit + 1
+
+    metadata = PaginationMetadata(
+        total=total, current_page=current_page, page_size=limit
+    )
+
+    return PaginatedResponse(metadata=metadata, data=users)
 
 
 def authenticate_user(username: str, password: str) -> Optional[Dict[str, str]]:
@@ -43,7 +58,7 @@ def get_user_by_username(username: str) -> Optional[AuthUser]:
     )
 
 
-def update_user(username: str, user_update: Dict) -> Optional[AuthUser]:
+def update_auth_user(username: str, user_update: AuthUser) -> Optional[AuthUser]:
     user_collection = get_auth_user_collection()
     user_update["updated_at"] = datetime.now(timezone.utc)
     updated_user = user_collection.find_one_and_update(

@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
@@ -51,7 +51,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     formatted_error_message = " and ".join(missing_fields) + " are required"
 
     return JSONResponse(
-        status_code=422,
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         content={
             "formatted_error_message": formatted_error_message,
             "detail": errors,
@@ -61,13 +61,13 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 app.middleware("http")(auth_middleware)
 
-app.include_router(auth_user.router, prefix="/auth")
-app.include_router(user_ig.router)
-app.include_router(user_ig_post.router)
-app.include_router(user_ig_story.router)
-app.include_router(user_ig_schedule.router)
-app.include_router(instagram.router)
-app.include_router(proxy.router)
+app.include_router(auth_user.router, prefix="/auth", tags=["/auth"])
+app.include_router(user_ig.router, tags=["/ig-users"])
+app.include_router(user_ig_post.router, tags=["/ig-post"])
+app.include_router(user_ig_story.router, tags=["/ig-story"])
+app.include_router(user_ig_schedule.router, tags=["/ig-schedule"])
+app.include_router(instagram.router, tags=["/instagram"])
+app.include_router(proxy.router, tags=["/proxy"])
 
 
 if __name__ == "__main__":

@@ -1,12 +1,18 @@
 from datetime import timedelta
 from typing import Dict
 
-from fastapi import APIRouter, HTTPException, status, Depends, Header
+from fastapi import APIRouter, HTTPException, status, Depends, Header, Query
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.auth.jwt import verify_token, create_access_token
-from app.models.auth_user import AuthUser, Token, AuthUserOut
-from app.crud.auth_user import create_user, authenticate_user, get_user_by_username
+from app.models.auth_user import AuthUser, Token, AuthUserOut, PaginatedResponse
+from app.crud.auth_user import (
+    create_user,
+    authenticate_user,
+    get_user_by_username,
+    update_auth_user,
+    get_auth_users,
+)
 from app.config import SECRET_KEY, ALGORITHM
 
 router = APIRouter()
@@ -39,7 +45,17 @@ async def refresh_access_token(refresh_token: str = Header(...)):
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@router.get("/users/me", response_model=AuthUserOut)
+@router.get("/users", response_model=PaginatedResponse)
+async def get_users(skip: int = Query(0, ge=0), limit: int = Query(10, ge=1)):
+    return get_auth_users(skip, limit)
+
+
+@router.put("/users/{username}", response_model=PaginatedResponse)
+async def update_user(username: str, user: AuthUser):
+    return update_auth_user(username, user)
+
+
+@router.get("/me", response_model=AuthUserOut)
 def read_users_me(token: str = Header(...)):
     username = verify_token(token, SECRET_KEY, ALGORITHM)
     user = get_user_by_username(username)
