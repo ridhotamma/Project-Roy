@@ -12,7 +12,7 @@ async def create_story(story: UserIGStory):
 
 @router.get("/v1/stories", response_model=PaginatedResponse)
 def get_stories(skip: int = Query(0, ge=0), limit: int = Query(10, ge=1)):
-    return crud_story.get_users(skip, limit)
+    return crud_story.get_stories(skip, limit)
 
 
 @router.get("/v1/stories/{username}", response_model=UserIGStory)
