@@ -1,7 +1,7 @@
 from pymongo import MongoClient
 
 client = MongoClient("mongodb://localhost:27017/")
-db = client['user_database']
+db = client['project_roy']
 
 def get_user_collection():
     return db['users']
