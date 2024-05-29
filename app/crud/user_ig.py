@@ -2,6 +2,8 @@ from pymongo.errors import DuplicateKeyError
 from app.database import get_user_collection
 from app.models.user_ig import UserIG, PaginatedResponse, PaginationMetadata
 from fastapi import HTTPException, status
+from pymongo import ReturnDocument
+from datetime import datetime, timezone
 
 
 def create_user(user: UserIG):
@@ -54,3 +56,29 @@ def delete_user(username: str):
     if result.deleted_count:
         return {"detail": "User deleted"}
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+
+def update_user_session(username: str, session_data: dict):
+    user_collection = get_user_collection()
+    session = {
+        "uuids": session_data.get("uuids", {}),
+        "cookies": session_data.get("cookies", {}),
+        "last_login": session_data.get(
+            "last_login", datetime.now(timezone.utc).timestamp()
+        ),
+        "device_settings": session_data.get("device_settings", {}),
+        "user_agent": session_data.get("user_agent", ""),
+    }
+    update_data = {"session": session, "updated_at": datetime.now(timezone.utc)}
+
+    updated_user = user_collection.find_one_and_update(
+        {"username": username},
+        {"$set": update_data},
+        return_document=ReturnDocument.AFTER,
+    )
+    if not updated_user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User with username '{username}' not found.",
+        )
+    return updated_user
