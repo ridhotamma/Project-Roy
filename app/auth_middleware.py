@@ -1,5 +1,6 @@
 from fastapi import Request, status
 from fastapi.responses import JSONResponse
+from starlette.exceptions import HTTPException
 from jose import JWTError
 
 from app.auth.jwt import verify_token
@@ -45,6 +46,14 @@ async def auth_middleware(request: Request, call_next):
                 },
             )
         request.state.user = user
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={
+                "status_code": e.status_code,
+                "message": e.detail,
+            },
+        )
     except JWTError:
         return JSONResponse(
             status_code=status.HTTP_403_FORBIDDEN,

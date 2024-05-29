@@ -50,6 +50,17 @@ async def get_users(skip: int = Query(0, ge=0), limit: int = Query(10, ge=1)):
     return get_auth_users(skip, limit)
 
 
+@router.get("/users/{username}", response_model=AuthUserOut)
+async def get_user_detail(username: str):
+    user = get_user_by_username(username)
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User Not Found",
+        )
+    return user
+
+
 @router.put("/users/{username}", response_model=PaginatedResponse)
 async def update_user(username: str, user: AuthUser):
     return update_auth_user(username, user)

@@ -1,7 +1,6 @@
 from jose import JWTError, jwt, ExpiredSignatureError
 from datetime import datetime, timedelta, timezone
-from fastapi import status
-from fastapi.responses import JSONResponse
+from fastapi import status, HTTPException
 from app.config import (
     SECRET_KEY,
     ALGORITHM,
@@ -31,13 +30,6 @@ def create_refresh_token(data: dict):
     return encoded_jwt
 
 
-def json_response(status_code: int, message: str) -> JSONResponse:
-    return JSONResponse(
-        status_code=status_code,
-        content={"status_code": status_code, "message": message},
-    )
-
-
 def verify_token(
     token: str, secret_key: str = SECRET_KEY, algorithm: str = ALGORITHM
 ) -> str:
@@ -48,11 +40,11 @@ def verify_token(
             raise JWTError()
         return username
     except ExpiredSignatureError:
-        return json_response(
-            status_code=status.HTTP_401_UNAUTHORIZED, message="Token has expired"
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Token has expired"
         )
     except JWTError:
-        return json_response(
+        raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            message="Could not validate credentials",
+            detail="Could not validate credentials",
         )

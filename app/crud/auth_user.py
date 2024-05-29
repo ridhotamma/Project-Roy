@@ -6,14 +6,19 @@ from fastapi.exceptions import HTTPException
 from fastapi import status
 from app.auth.utils import hash_password, verify_password
 from app.auth.jwt import create_access_token, create_refresh_token
-from app.models.auth_user import AuthUser, PaginatedResponse, PaginationMetadata
+from app.models.auth_user import (
+    AuthUserOut,
+    AuthUser,
+    PaginatedResponse,
+    PaginationMetadata,
+)
 from app.database import get_auth_user_collection
 
 
 def create_user(user: AuthUser) -> AuthUser:
     user_collection = get_auth_user_collection()
     user.password = hash_password(user.password)
-    user_collection.insert_one(user.dict())
+    user_collection.insert_one(user.model_dump())
     return user
 
 
@@ -21,7 +26,7 @@ def get_auth_users(skip: int, limit: int) -> PaginatedResponse:
     user_collection = get_auth_user_collection()
     total = user_collection.count_documents({})
     users_cursor = user_collection.find().skip(skip).limit(limit)
-    users = [AuthUser(**user) for user in users_cursor]
+    users = [AuthUserOut(**user) for user in users_cursor]
     current_page = skip // limit + 1
 
     metadata = PaginationMetadata(
