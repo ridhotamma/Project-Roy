@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from celery import Celery
 from app.models.user_ig_schedule import UserIGSchedule
 from app.tasks.tasks import execute_post_task, execute_story_task
@@ -8,7 +8,7 @@ celery_app = Celery("tasks")
 
 
 def schedule_task(user_schedule: UserIGSchedule):
-    eta = user_schedule.scheduled_time - datetime.utcnow()
+    eta = user_schedule.scheduled_time - datetime.now(timezone.utc)
     if user_schedule.action_type == "post_content":
         execute_post_task.apply_async(
             args=[user_schedule.username, user_schedule.scheduled_item.model_dump()],
