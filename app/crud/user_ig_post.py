@@ -1,7 +1,7 @@
 from pymongo.errors import DuplicateKeyError
 from app.database import get_post_collection
 from app.models.user_ig_post import UserIGPost, PaginatedResponse, PaginationMetadata
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 
 
 def create_post(post: UserIGPost):
@@ -32,15 +32,17 @@ def get_post(username: str):
     post = post_collection.find_one({"username": username})
     if post:
         return UserIGPost(**post)
-    raise HTTPException(status_code=404, detail="Post not found")
+    raise HTTPException(status_code=status, detail="Post not found")
 
 
 def update_post(username: str, post: UserIGPost):
     post_collection = get_post_collection()
-    result = post_collection.update_one({"username": username}, {"$set": post.dict()})
+    result = post_collection.update_one(
+        {"username": username}, {"$set": post.model_dump()}
+    )
     if result.matched_count:
         return post
-    raise HTTPException(status_code=404, detail="Post not found")
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
 
 
 def delete_post(username: str):
@@ -48,4 +50,4 @@ def delete_post(username: str):
     result = post_collection.delete_one({"username": username})
     if result.deleted_count:
         return {"detail": "Post deleted"}
-    raise HTTPException(status_code=404, detail="Post not found")
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")

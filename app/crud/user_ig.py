@@ -1,7 +1,7 @@
 from pymongo.errors import DuplicateKeyError
 from app.database import get_user_collection
 from app.models.user_ig import UserIG, PaginatedResponse, PaginationMetadata
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 
 
 def create_user(user: UserIG):
@@ -37,7 +37,7 @@ def get_user(username: str):
     user = user_collection.find_one({"username": username})
     if user:
         return UserIG(**user)
-    raise HTTPException(status_code=404, detail="User not found")
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
 
 def update_user(username: str, user: UserIG):
@@ -45,7 +45,7 @@ def update_user(username: str, user: UserIG):
     result = user_collection.update_one({"username": username}, {"$set": user.dict()})
     if result.matched_count:
         return user
-    raise HTTPException(status_code=404, detail="User not found")
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
 
 def delete_user(username: str):
@@ -53,4 +53,4 @@ def delete_user(username: str):
     result = user_collection.delete_one({"username": username})
     if result.deleted_count:
         return {"detail": "User deleted"}
-    raise HTTPException(status_code=404, detail="User not found")
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, status
 from typing import List
 from app.proxy.utils import validate_proxies_concurrently
 
@@ -11,4 +11,7 @@ async def validate_proxies(proxy_urls: List[str] = Query(...)):
         usable_proxies = validate_proxies_concurrently(proxy_urls)
         return {"usable_proxies": usable_proxies}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to validate proxies: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to validate proxies: {e}",
+        )

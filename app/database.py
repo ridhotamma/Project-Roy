@@ -13,6 +13,10 @@ def get_user_collection():
     return db["users"]
 
 
+def get_auth_user_collection():
+    return db["auth_users"]
+
+
 def get_post_collection():
     return db["posts"]
 

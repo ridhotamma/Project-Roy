@@ -5,7 +5,7 @@ from app.models.user_ig_schedule import (
     PaginatedResponse,
     PaginationMetadata,
 )
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 
 
 def create_schedule(schedule: UserIGSchedule):
@@ -14,7 +14,9 @@ def create_schedule(schedule: UserIGSchedule):
         schedule_collection.insert_one(schedule.model_dump())
         return schedule
     except DuplicateKeyError:
-        raise HTTPException(status_code=400, detail="Schedule already exists")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Schedule already exists"
+        )
 
 
 def get_schedules(skip: int = 0, limit: int = 10) -> PaginatedResponse:
@@ -37,7 +39,9 @@ def get_schedule(username: str):
     schedule = schedule_collection.find_one({"username": username})
     if schedule:
         return UserIGSchedule(**schedule)
-    raise HTTPException(status_code=404, detail="Schedule not found")
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND, detail="Schedule not found"
+    )
 
 
 def update_schedule(username: str, schedule: UserIGSchedule):
@@ -47,7 +51,9 @@ def update_schedule(username: str, schedule: UserIGSchedule):
     )
     if result.matched_count:
         return schedule
-    raise HTTPException(status_code=404, detail="Schedule not found")
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND, detail="Schedule not found"
+    )
 
 
 def delete_schedule(username: str):
@@ -55,4 +61,6 @@ def delete_schedule(username: str):
     result = schedule_collection.delete_one({"username": username})
     if result.deleted_count:
         return {"detail": "Schedule deleted"}
-    raise HTTPException(status_code=404, detail="Schedule not found")
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND, detail="Schedule not found"
+    )
