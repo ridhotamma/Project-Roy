@@ -1,7 +1,12 @@
+# app/database.py
+
+import os
 from pymongo import MongoClient
 
-client = MongoClient("mongodb://localhost:27017/")
-db = client['project_roy']
+mongo_url = os.getenv("MONGO_URL", "mongodb://localhost:27017/project_roy")
+
+client = MongoClient(mongo_url)
+db = client.get_database()
 
 def get_user_collection():
     return db['users']
