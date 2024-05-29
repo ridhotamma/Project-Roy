@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException, status, Depends, Header, Query
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.auth.jwt import verify_token, create_access_token
-from app.models.auth_user import AuthUser, LoginResult, AuthUserOut, PaginatedResponse
+from app.models.auth_user import AuthUserIn, LoginResult, AuthUserOut, PaginatedResponse
 from app.crud.auth_user import (
     create_user,
     authenticate_user,
@@ -19,7 +19,7 @@ router = APIRouter()
 
 
 @router.post("/register", response_model=AuthUserOut)
-def register_user(user: AuthUser):
+def register_user(user: AuthUserIn):
     return create_user(user)
 
 
@@ -62,7 +62,7 @@ async def get_user_detail(username: str):
 
 
 @router.put("/users/{username}", response_model=PaginatedResponse)
-async def update_user(username: str, user: AuthUser):
+async def update_user(username: str, user: AuthUserIn):
     return update_auth_user(username, user)
 
 

@@ -8,7 +8,7 @@ from app.auth.utils import hash_password, verify_password
 from app.auth.jwt import create_access_token, create_refresh_token
 from app.models.auth_user import (
     AuthUserOut,
-    AuthUser,
+    AuthUserIn,
     PaginatedResponse,
     PaginationMetadata,
 )
@@ -16,7 +16,7 @@ from app.database import get_auth_user_collection
 from app.config import ACCESS_TOKEN_EXPIRE_MINUTES
 
 
-def create_user(user: AuthUser) -> AuthUser:
+def create_user(user: AuthUserIn) -> AuthUserIn:
     user_collection = get_auth_user_collection()
     user.password = hash_password(user.password)
     user_collection.insert_one(user.model_dump())
@@ -54,17 +54,17 @@ def authenticate_user(username: str, password: str) -> Optional[Dict[str, str]]:
     }
 
 
-def get_user_by_username(username: str) -> Optional[AuthUser]:
+def get_user_by_username(username: str) -> Optional[AuthUserIn]:
     user_collection = get_auth_user_collection()
     user = user_collection.find_one({"username": username})
     if user:
-        return AuthUser(**user)
+        return AuthUserIn(**user)
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND, detail="Auth User not found"
     )
 
 
-def update_auth_user(username: str, user_update: AuthUser) -> Optional[AuthUser]:
+def update_auth_user(username: str, user_update: AuthUserIn) -> Optional[AuthUserIn]:
     user_collection = get_auth_user_collection()
     user_update["updated_at"] = datetime.now(timezone.utc)
     updated_user = user_collection.find_one_and_update(
@@ -73,7 +73,7 @@ def update_auth_user(username: str, user_update: AuthUser) -> Optional[AuthUser]
         return_document=ReturnDocument.AFTER,
     )
     if updated_user:
-        return AuthUser(**updated_user)
+        return AuthUserIn(**updated_user)
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
         detail=f"User with username '{username}' not found.",
