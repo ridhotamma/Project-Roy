@@ -1,7 +1,19 @@
 from fastapi import FastAPI
 from app.routers import user_ig, user_ig_post, user_ig_schedule, user_ig_story, instagram, proxy
 
-app = FastAPI()
+app = FastAPI(
+    title="Project Roy",
+    description="Content and story social media post automation",
+    version="1.0.0",
+    contact={
+        "name": "Author",
+        "email": "ridhotamma@outlook.com",
+    },
+    license_info={
+        "name": "Apache 2.0",
+        "url": "http://www.apache.org/licenses/LICENSE-2.0.html",
+    },
+)
 
 app.include_router(user_ig.router)
 app.include_router(user_ig_post.router)

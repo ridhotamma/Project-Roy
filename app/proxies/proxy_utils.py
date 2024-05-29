@@ -8,21 +8,6 @@ def read_proxy_list(file_path):
     return [f'http://{proxy.strip()}' for proxy in proxies]
 
 
-def make_request(url, proxy=None):
-    try:
-        if proxy:
-            response = requests.get(
-                url, proxies={'http': proxy, 'https': proxy})
-        else:
-            response = requests.get(url)
-
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        print(f"Request failed {e}")
-        return None
-
-
 def is_proxy_usable(proxy):
     test_url = "https://httpbin.org/ip"  # Simple API to test the proxy
     try:
@@ -36,13 +21,12 @@ def is_proxy_usable(proxy):
 
 
 def validate_proxies_concurrently(proxies):
-    usable_proxies = []
+    results = []
     with ThreadPoolExecutor(max_workers=20) as executor:
         future_to_proxy = {executor.submit(
             is_proxy_usable, proxy): proxy for proxy in proxies}
         for future in as_completed(future_to_proxy):
             proxy, is_usable = future.result()
-            if is_usable:
-                usable_proxies.append(proxy)
+            results.append({"proxy_url": proxy, "is_usable": is_usable})
 
-    return usable_proxies
+    return results
