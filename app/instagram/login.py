@@ -1,6 +1,7 @@
 from instagrapi import Client
 from instagrapi.exceptions import LoginRequired
 import logging
+from app.crud.auth_user import update_user_session
 
 logger = logging.getLogger()
 
@@ -52,7 +53,7 @@ def login(username, password):
     if not login_via_pw and not login_via_session:
         raise Exception("Couldn't login user with either password or session")
 
-    # Save session to file
-    cl.dump_settings("session.json")
+    # Implement update user session here
+    update_user_session(username, cl.get_settings())
 
     return cl
