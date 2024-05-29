@@ -6,8 +6,13 @@ from fastapi import HTTPException
 
 def create_user(user: UserIG):
     user_collection = get_user_collection()
+
+    existing_user = user_collection.find_one({"username": user.username})
+    
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Username already exists")
     try:
-        user_collection.insert_one(user.dict())
+        user_collection.insert_one(user.model_dump())
         return user
     except DuplicateKeyError:
         raise HTTPException(status_code=400, detail="Username already exists")
