@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Query
 from typing import List
-from app.proxies.proxy_utils import validate_proxies_concurrently
+from app.proxies.utils import validate_proxies_concurrently
 
 router = APIRouter()
 
