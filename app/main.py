@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from app.routers import user_ig, user_ig_post, user_ig_schedule, user_ig_story, instagram, proxy, auth_user
+from auth_middleware import auth_middleware
 
 app = FastAPI(
     title="Project Roy",
@@ -14,6 +15,8 @@ app = FastAPI(
         "url": "http://www.apache.org/licenses/LICENSE-2.0.html",
     },
 )
+
+app.middleware("http")(auth_middleware)
 
 app.include_router(user_ig.router)
 app.include_router(user_ig_post.router)

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from pymongo import ReturnDocument
 from app.auth.utils import hash_password, verify_password
 from app.auth.jwt import create_access_token
@@ -9,8 +9,8 @@ from typing import Optional, Dict
 def create_user(user: AuthUser) -> AuthUser:
     user_collection = get_user_collection()
     user.password = hash_password(user.password)
-    user.created_at = datetime.utcnow()
-    user.updated_at = datetime.utcnow()
+    user.created_at = datetime.now(timezone.utc)
+    user.updated_at = datetime.now(timezone.utc)
     user_collection.insert_one(user.dict())
     return user
 
