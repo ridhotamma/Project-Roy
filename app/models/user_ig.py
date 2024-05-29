@@ -8,7 +8,7 @@ class UserIG(BaseModel):
     proxy_url: Optional[str] = Field(None, pattern=r"^http://.*|https://.*")
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "username": "johndoe",
                 "password": "securepassword",

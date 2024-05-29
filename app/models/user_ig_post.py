@@ -8,7 +8,7 @@ class UserIGPost(BaseModel):
     caption: str
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "username": "johndoe",
                 "photo_path": "path/to/photo.jpg",

@@ -26,7 +26,7 @@ class UserIGSchedule(BaseModel):
         return value
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "action_type": "post_content",
                 "username": "johndoe",

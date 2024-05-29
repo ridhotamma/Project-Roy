@@ -14,7 +14,7 @@ class AuthUser(BaseModel):
     profile_picture: Optional[str] = None
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "email": "user@example.com",
                 "username": "johndoe",
