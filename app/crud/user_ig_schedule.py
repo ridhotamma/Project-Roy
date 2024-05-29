@@ -6,6 +6,7 @@ from app.models.user_ig_schedule import (
     PaginationMetadata,
 )
 from fastapi import HTTPException, status
+from datetime import datetime
 
 
 def create_schedule(schedule: UserIGSchedule):
@@ -19,10 +20,16 @@ def create_schedule(schedule: UserIGSchedule):
         )
 
 
-def get_schedules(skip: int = 0, limit: int = 10) -> PaginatedResponse:
+def get_schedules(
+    skip: int = 0, limit: int = 10, is_active: bool = False
+) -> PaginatedResponse:
+    now = datetime.utcnow()
     schedule_collection = get_schedule_collection()
-    total = schedule_collection.count_documents({})
-    user_schedules_cursor = schedule_collection.find().skip(skip).limit(limit)
+    schedule_filter = {"scheduled_time": {"$gt": now}} if is_active else {}
+    total = schedule_collection.count_documents(schedule_filter)
+    user_schedules_cursor = (
+        schedule_collection.find(schedule_filter).skip(skip).limit(limit)
+    )
     user_schedules = [UserIGSchedule(**schedule) for schedule in user_schedules_cursor]
 
     current_page = skip // limit + 1

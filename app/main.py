@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException
+from lifespan import task_runner
 
 from app.routers import (
     user_ig,
@@ -26,6 +27,7 @@ app = FastAPI(
         "name": "Apache 2.0",
         "url": "http://www.apache.org/licenses/LICENSE-2.0.html",
     },
+    lifespan=task_runner,
 )
 
 
@@ -57,6 +59,11 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
             "detail": errors,
         },
     )
+
+
+@app.get("/")
+def read_root():
+    return {"message": "Project Roy Is Running"}
 
 
 app.middleware("http")(auth_middleware)

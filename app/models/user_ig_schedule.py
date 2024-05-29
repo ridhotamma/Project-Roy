@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 from datetime import datetime
 from typing import List, Union
 from app.models.user_ig_post import UserIGPost
@@ -11,7 +11,7 @@ class UserIGSchedule(BaseModel):
     scheduled_item: Union[UserIGPost, UserIGStory]
     scheduled_time: datetime
 
-    @validator("scheduled_item")
+    @field_validator("scheduled_item")
     def validate_scheduled_item(cls, value, values):
         if values["action_type"] == "post_content" and not isinstance(
             value, UserIGPost
