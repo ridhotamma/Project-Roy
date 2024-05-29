@@ -8,7 +8,7 @@ from app.routers import (
     proxy,
     auth_user,
 )
-from auth_middleware import auth_middleware
+from app.auth_middleware import auth_middleware
 
 app = FastAPI(
     title="Project Roy",
