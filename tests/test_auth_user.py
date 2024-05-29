@@ -1,4 +1,4 @@
-def test_register_user(test_client, test_db):
+def test_register_user(test_client, test_db, access_token):
     response = test_client.post(
         "/auth/register",
         json={
@@ -6,6 +6,7 @@ def test_register_user(test_client, test_db):
             "email": "newuser2@example.com",
             "password": "newpassword2",
         },
+        headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 200
     data = response.json()
