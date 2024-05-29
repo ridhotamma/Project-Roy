@@ -1,4 +1,5 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
+from typing import List
 from app.models.user_ig_story import UserIGStory
 from app.crud import user_ig_story as crud_story
 
@@ -7,6 +8,10 @@ router = APIRouter()
 @router.post("/v1/stories", response_model=UserIGStory)
 async def create_story(story: UserIGStory):
     return crud_story.create_story(story)
+
+@router.get("/v1/stories", response_model=List[UserIGStory])
+def get_stories(skip: int = Query(0, ge=0), limit: int = Query(10, ge=1)):
+    return crud_story.get_users(skip, limit)
 
 @router.get("/v1/stories/{username}", response_model=UserIGStory)
 async def get_story(username: str):

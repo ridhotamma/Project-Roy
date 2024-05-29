@@ -1,8 +1,13 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
+from typing import List
 from app.models.user_ig import UserIG
 from app.crud import user_ig as crud_user
 
 router = APIRouter()
+
+@router.get("/v1/users/", response_model=List[UserIG])
+def get_users(skip: int = Query(0, ge=0), limit: int = Query(10, ge=1)):
+    return crud_user.get_users(skip, limit)
 
 @router.post("/v1/users", response_model=UserIG)
 async def create_user(user: UserIG):

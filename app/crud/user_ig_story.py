@@ -1,6 +1,6 @@
 from pymongo.errors import DuplicateKeyError
 from app.database import get_story_collection
-from app.models.user_ig_story import UserIGStory
+from app.models.user_ig_story import UserIGStory, PaginatedResponse, PaginationMetadata
 from fastapi import HTTPException
 
 def create_story(story: UserIGStory):
@@ -10,6 +10,21 @@ def create_story(story: UserIGStory):
         return story
     except DuplicateKeyError:
         raise HTTPException(status_code=400, detail="Story already exists")
+
+def get_stories(skip: int = 0, limit: int = 10) -> PaginatedResponse:
+    story_collection = get_story_collection()
+    total = story_collection.count_documents({})
+    user_stories_cursor = story_collection.find().skip(skip).limit(limit)
+    user_stories = [UserIGStory(**story) for story in user_stories_cursor]
+    current_page = skip // limit + 1
+
+    metadata = PaginationMetadata(
+        total=total,
+        current_page=current_page,
+        page_size=limit
+    )
+
+    return PaginatedResponse(metadata=metadata, data=user_stories)
 
 def get_story(username: str):
     story_collection = get_story_collection()

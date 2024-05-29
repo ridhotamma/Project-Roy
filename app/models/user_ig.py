@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, List
 
 
 class UserIG(BaseModel):
@@ -15,3 +15,14 @@ class UserIG(BaseModel):
                 "proxy_url": "http://proxy.example.com:8080"
             }
         }
+
+
+class PaginationMetadata(BaseModel):
+    total: int
+    current_page: int
+    page_size: int
+
+
+class PaginatedResponse(BaseModel):
+    metadata: PaginationMetadata
+    data: List[UserIG]

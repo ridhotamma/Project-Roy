@@ -1,4 +1,6 @@
+from typing import List
 from pydantic import BaseModel, Field
+
 
 class UserIGStory(BaseModel):
     username: str = Field(..., min_length=3, max_length=50)
@@ -16,3 +18,14 @@ class UserIGStory(BaseModel):
                 "caption_pos_y": 20,
             }
         }
+
+
+class PaginationMetadata(BaseModel):
+    total: int
+    current_page: int
+    page_size: int
+
+
+class PaginatedResponse(BaseModel):
+    metadata: PaginationMetadata
+    data: List[UserIGStory]
