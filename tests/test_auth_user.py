@@ -17,7 +17,7 @@ def test_login_user(test_client, test_db, mock_user_data):
     response = test_client.post(
         "/auth/token",
         data={
-            "username": "testuser1",
+            "username": mock_user_data[0]["username"],
             "password": "testpassword1",
         },
     )
