@@ -1,8 +1,7 @@
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
-from jose import JWTError
 
 from app.routers import (
     user_ig,
@@ -28,22 +27,6 @@ app = FastAPI(
         "url": "http://www.apache.org/licenses/LICENSE-2.0.html",
     },
 )
-
-
-@app.exception_handler(HTTPException)
-async def custom_generatal_error(request: Request, exc: JWTError):
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"status_code": exc.status_code, "message": exc.detail},
-    )
-
-
-@app.exception_handler(JWTError)
-async def custom_jwt_error(request: Request, exc: JWTError):
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"status_code": exc.status_code, "message": exc.detail},
-    )
 
 
 @app.exception_handler(StarletteHTTPException)
