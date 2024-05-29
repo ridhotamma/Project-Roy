@@ -11,8 +11,8 @@ async def create_schedule(schedule: UserIGSchedule):
 
 
 @router.get("/v1/schedules", response_model=PaginatedResponse)
-def get_stories(skip: int = Query(0, ge=0), limit: int = Query(10, ge=1)):
-    return crud_schedule.get_users(skip, limit)
+def get_schedules(skip: int = Query(0, ge=0), limit: int = Query(10, ge=1)):
+    return crud_schedule.get_schedules(skip, limit)
 
 
 @router.get("/v1/schedules/{username}", response_model=UserIGSchedule)
