@@ -1,11 +1,10 @@
 from fastapi import APIRouter, Query
-from typing import List
-from app.models.user_ig import UserIG
+from app.models.user_ig import UserIG, PaginatedResponse
 from app.crud import user_ig as crud_user
 
 router = APIRouter()
 
-@router.get("/v1/users/", response_model=List[UserIG])
+@router.get("/v1/users/", response_model=PaginatedResponse)
 def get_users(skip: int = Query(0, ge=0), limit: int = Query(10, ge=1)):
     return crud_user.get_users(skip, limit)
 
