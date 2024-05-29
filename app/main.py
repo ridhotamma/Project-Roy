@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException
-from lifespan import task_runner
+from app.lifespan import task_runner
 
 from app.routers import (
     user_ig,
@@ -61,9 +61,9 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     )
 
 
-@app.get("/")
+@app.get("/ping")
 def read_root():
-    return {"message": "Project Roy Is Running"}
+    return {"message": "Pong"}
 
 
 app.middleware("http")(auth_middleware)

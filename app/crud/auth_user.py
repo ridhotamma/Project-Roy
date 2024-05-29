@@ -13,6 +13,7 @@ from app.models.auth_user import (
     PaginationMetadata,
 )
 from app.database import get_auth_user_collection
+from app.config import ACCESS_TOKEN_EXPIRE_MINUTES
 
 
 def create_user(user: AuthUser) -> AuthUser:
@@ -41,7 +42,7 @@ def authenticate_user(username: str, password: str) -> Optional[Dict[str, str]]:
     user = user_collection.find_one({"username": username})
     if not user or not verify_password(password, user["password"]):
         return None
-    access_token_expires = timedelta(minutes=30)
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": user["username"]}, expires_delta=access_token_expires
     )

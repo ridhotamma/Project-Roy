@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException, status, Depends, Header, Query
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.auth.jwt import verify_token, create_access_token
-from app.models.auth_user import AuthUser, Token, AuthUserOut, PaginatedResponse
+from app.models.auth_user import AuthUser, LoginResult, AuthUserOut, PaginatedResponse
 from app.crud.auth_user import (
     create_user,
     authenticate_user,
@@ -23,16 +23,16 @@ def register_user(user: AuthUser):
     return create_user(user)
 
 
-@router.post("/token", response_model=Token)
+@router.post("/token", response_model=LoginResult)
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = authenticate_user(form_data.username, form_data.password)
-    if not user:
+    credentials = authenticate_user(form_data.username, form_data.password)
+    if not credentials:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    return user
+    return credentials
 
 
 @router.post("/refresh-token", response_model=Dict[str, str])

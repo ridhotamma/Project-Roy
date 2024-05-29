@@ -49,8 +49,9 @@ class AuthUserOut(BaseModel):
         }
 
 
-class Token(BaseModel):
+class LoginResult(BaseModel):
     access_token: str
+    refresh_token: str
     token_type: str
 
 
