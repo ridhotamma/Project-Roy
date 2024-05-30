@@ -68,13 +68,13 @@ def read_root():
 
 app.middleware("http")(auth_middleware)
 
-app.include_router(auth_user.router, prefix="/auth", tags=["/auth"])
-app.include_router(user_ig.router, tags=["/ig-users"])
-app.include_router(user_ig_post.router, tags=["/ig-post"])
-app.include_router(user_ig_story.router, tags=["/ig-story"])
-app.include_router(user_ig_schedule.router, tags=["/ig-schedule"])
-app.include_router(instagram.router, tags=["/instagram"])
-app.include_router(proxy.router, tags=["/proxy"])
+app.include_router(auth_user.router, prefix="/auth", tags=["Authentication"])
+app.include_router(user_ig.router, tags=["Instagram User"])
+app.include_router(user_ig_post.router, tags=["Instagram Post"])
+app.include_router(user_ig_story.router, tags=["Instagram Story"])
+app.include_router(user_ig_schedule.router, tags=["Instagram Upload Schedule"])
+app.include_router(instagram.router, tags=["Instagram Upload API"])
+app.include_router(proxy.router, tags=["Proxy"])
 
 
 if __name__ == "__main__":

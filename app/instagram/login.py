@@ -1,27 +1,27 @@
+from typing import Dict
 from instagrapi import Client
 from instagrapi.exceptions import LoginRequired
-import logging
-from app.crud.user_ig import update_user_session, get_user
+from app.crud.user_ig import update_user_session
 from app.proxy.utils import is_proxy_usable
+
+import logging
 
 logger = logging.getLogger()
 
 
-def login(username, password):
+def login_instagram(
+    username: str, password: str, proxy: str = None, session: Dict = None
+):
+    print("Trying to login instagram...")
+
     cl = Client()
 
-    user = get_user(username)
+    if proxy and is_proxy_usable(proxy):
+        cl.set_proxy(proxy)
 
-    if not user:
-        raise ValueError(f"User {username} not found")
-
-    if user.proxy_url and is_proxy_usable(user.proxy_url):
-        cl.set_proxy(user.proxy_url)
-
-    if user.session:
-        session_data = user.session
+    if session:
         try:
-            cl.set_settings(session_data)
+            cl.set_settings(session)
             cl.login(username, password)
 
             # Check if session is valid
@@ -48,13 +48,13 @@ def login(username, password):
 
     if not login_via_session:
         try:
-            logger.info(
+            print(
                 "Attempting to login via username and password. username: %s" % username
             )
             if cl.login(username, password):
                 login_via_pw = True
         except Exception as e:
-            logger.info("Couldn't login user using username and password: %s" % e)
+            print("Couldn't login user using username and password: %s" % e)
             login_via_pw = False
 
     if not login_via_pw and not login_via_session:

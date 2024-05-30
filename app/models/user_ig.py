@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Annotated
+from fastapi import Form
 
 
 class Session(BaseModel):
@@ -10,7 +11,7 @@ class Session(BaseModel):
     user_agent: str
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "uuids": {
                     "phone_id": "57d64c41-a916-3fa5-bd7a-3796c1dab122",
@@ -76,6 +77,27 @@ class UserIG(BaseModel):
                 },
             }
         }
+
+
+class LoginRequest(BaseModel):
+    username: Annotated[str, Form()]
+    password: Annotated[str, Form()]
+
+
+class CreateStoryRequest(BaseModel):
+    username: Annotated[str, Form()]
+    photo_path: Annotated[str, Form()]
+
+
+class CreatePostRequest(BaseModel):
+    username: Annotated[str, Form()]
+    photo_path: Annotated[str, Form()]
+    caption: Annotated[str, Form()]
+
+
+class CreateVideoStoryRequest(BaseModel):
+    username: Annotated[str, Form()]
+    photo_path: Annotated[str, Form()]
 
 
 class PaginationMetadata(BaseModel):

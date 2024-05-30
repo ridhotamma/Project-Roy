@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from celery import Celery
 from app.models.user_ig_schedule import UserIGSchedule
-from app.tasks.tasks import execute_post_task, execute_story_task
+from app.tasks.tasks import post_instagram_content, post_instagram_story
 from app.crud.user_ig_schedule import get_schedules
 
 celery_app = Celery("tasks")
@@ -10,12 +10,12 @@ celery_app = Celery("tasks")
 def schedule_task(user_schedule: UserIGSchedule):
     eta = user_schedule.scheduled_time - datetime.now(timezone.utc)
     if user_schedule.action_type == "post_content":
-        execute_post_task.apply_async(
+        post_instagram_content.apply_async(
             args=[user_schedule.username, user_schedule.scheduled_item.model_dump()],
             eta=eta,
         )
     elif user_schedule.action_type == "post_story":
-        execute_story_task.apply_async(
+        post_instagram_story.apply_async(
             args=[user_schedule.username, user_schedule.scheduled_item.model_dump()],
             eta=eta,
         )

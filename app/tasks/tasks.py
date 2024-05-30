@@ -7,12 +7,12 @@ logger = logging.getLogger()
 
 
 @shared_task
-def execute_post_task(username: str, item: dict):
+def post_instagram_content(username: str, item: dict):
     logger.info(f"Executing post task for user {username} with item {item}")
 
 
 @shared_task
-def execute_story_task(username: str, item: dict):
+def post_instagram_story(username: str, item: dict):
     logger.info(f"Executing story task for user {username} with item {item}")
 
 
