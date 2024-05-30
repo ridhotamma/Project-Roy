@@ -1,5 +1,5 @@
 from datetime import timedelta
-from typing import Dict
+from typing import Dict, Annotated
 
 from fastapi import APIRouter, HTTPException, status, Depends, Header, Query
 from fastapi.security import OAuth2PasswordRequestForm
@@ -14,6 +14,7 @@ from app.crud.auth_user import (
     get_auth_users,
 )
 from app.config import SECRET_KEY, ALGORITHM
+from app.logger.config import logger
 
 router = APIRouter()
 
@@ -24,7 +25,8 @@ def register_user(user: AuthUserIn):
 
 
 @router.post("/token/", response_model=LoginResult)
-def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
+    logger.info(f"User Login with {form_data.username} {form_data.password}")
     credentials = authenticate_user(form_data.username, form_data.password)
     if not credentials:
         raise HTTPException(

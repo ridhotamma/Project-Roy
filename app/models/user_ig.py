@@ -1,24 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import Optional, List, Dict, Any, Annotated
 from fastapi import Form
-from bson import ObjectId
-
-
-class PyObjectId(ObjectId):
-    @classmethod
-    def __get_validators__(cls):
-        yield cls.validate
-
-    @classmethod
-    def validate(cls, v):
-        if not ObjectId.is_valid(v):
-            raise ValueError("Invalid ObjectId")
-        return ObjectId(v)
-
-    @classmethod
-    def __get_pydantic_json_schema__(cls, schema):
-        schema.update(type="string")
-        return schema
 
 
 class Session(BaseModel):
@@ -58,16 +40,12 @@ class Session(BaseModel):
 
 
 class UserIG(BaseModel):
-    id: Optional[PyObjectId] = Field(default_factory=PyObjectId, alias="_id")
     username: str = Field(..., min_length=3, max_length=50)
     password: str = Field(..., min_length=6)
     proxy_url: Optional[str] = Field(None, pattern=r"^http://.*|https://.*")
     session: Optional[Session] = None
 
     class Config:
-        allow_population_by_field_name: True
-        arbitrary_types_allowed = True
-        json_encoders = {ObjectId: str}
         json_schema_extra = {
             "example": {
                 "username": "johndoe",

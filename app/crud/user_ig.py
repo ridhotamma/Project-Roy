@@ -25,12 +25,7 @@ def get_users(skip: int = 0, limit: int = 10) -> PaginatedResponse:
     total = user_collection.count_documents({})
     users_cursor = user_collection.find().skip(skip).limit(limit)
     current_page = skip // limit + 1
-
-    users_result = []
-    for user in users_cursor:
-        user["id"] = user.pop("_id")
-        users_result.append(user)
-
+    users_result = [UserIGOut(**user) for user in users_cursor]
     metadata = PaginationMetadata(
         total=total, current_page=current_page, page_size=limit
     )
@@ -42,7 +37,6 @@ def get_user(username: str):
     user_collection = get_ig_user_collection()
     user = user_collection.find_one({"username": username})
     if user:
-        user["id"] = user.pop("_id")
         return UserIG(**user)
 
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")

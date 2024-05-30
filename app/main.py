@@ -1,6 +1,7 @@
-from fastapi import FastAPI, Request, status
+from fastapi import FastAPI, Request, status, Depends
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
+from fastapi.security import OAuth2PasswordBearer
 from starlette.exceptions import HTTPException
 from app.lifespan import task_runner
 
@@ -12,8 +13,12 @@ from app.routers import (
     instagram,
     proxy,
     auth_user,
+    file_upload,
 )
 from app.auth_middleware import auth_middleware
+
+# Define the OAuth2 scheme
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/token")
 
 app = FastAPI(
     title="Project Roy",
@@ -73,15 +78,53 @@ def read_root():
 app.middleware("http")(auth_middleware)
 
 # Routers
-app.include_router(auth_user.router, prefix="/api/v1/auth", tags=["Authentication"])
-app.include_router(user_ig.router, prefix="/api/v1", tags=["Instagram User"])
-app.include_router(user_ig_post.router, prefix="/api/v1", tags=["Instagram Post"])
-app.include_router(user_ig_story.router, prefix="/api/v1", tags=["Instagram Story"])
 app.include_router(
-    user_ig_schedule.router, prefix="/api/v1", tags=["Instagram Upload Schedule"]
+    auth_user.router,
+    prefix="/api/v1/auth",
+    tags=["Authentication"],
 )
-app.include_router(instagram.router, prefix="/api/v1", tags=["Instagram Upload API"])
-app.include_router(proxy.router, prefix="/api/v1", tags=["Proxy"])
+app.include_router(
+    user_ig.router,
+    prefix="/api/v1",
+    tags=["Instagram User"],
+    dependencies=[Depends(oauth2_scheme)],
+)
+app.include_router(
+    user_ig_post.router,
+    prefix="/api/v1",
+    tags=["Instagram Post"],
+    dependencies=[Depends(oauth2_scheme)],
+)
+app.include_router(
+    user_ig_story.router,
+    prefix="/api/v1",
+    tags=["Instagram Story"],
+    dependencies=[Depends(oauth2_scheme)],
+)
+app.include_router(
+    user_ig_schedule.router,
+    prefix="/api/v1",
+    tags=["Instagram Upload Schedule"],
+    dependencies=[Depends(oauth2_scheme)],
+)
+app.include_router(
+    instagram.router,
+    prefix="/api/v1",
+    tags=["Instagram Upload API"],
+    dependencies=[Depends(oauth2_scheme)],
+)
+app.include_router(
+    proxy.router,
+    prefix="/api/v1",
+    tags=["Proxy"],
+    dependencies=[Depends(oauth2_scheme)],
+)
+app.include_router(
+    file_upload.router,
+    prefix="/api/v1",
+    tags=["S3 File upload"],
+    dependencies=[Depends(oauth2_scheme)],
+)
 
 # Main entry point
 if __name__ == "__main__":
