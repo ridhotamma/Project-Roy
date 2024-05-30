@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Query
-from app.models.user_ig import UserIG, PaginatedResponse
+from app.models.user_ig import UserIG, UserIGOut, PaginatedResponse
 from app.crud import user_ig as crud_user
 
 router = APIRouter()
@@ -15,12 +15,12 @@ async def create_instagram_user(user: UserIG):
     return crud_user.create_user(user)
 
 
-@router.get("/v1/ig-users/{username}", response_model=UserIG)
+@router.get("/v1/ig-users/{username}", response_model=UserIGOut)
 async def get_instagram_user(username: str):
     return crud_user.get_user(username)
 
 
-@router.put("/v1/ig-users/{username}", response_model=UserIG)
+@router.put("/v1/ig-users/{username}", response_model=UserIGOut)
 async def update_instagram_user(username: str, user: UserIG):
     return crud_user.update_user(username, user)
 

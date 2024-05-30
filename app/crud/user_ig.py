@@ -6,7 +6,7 @@ from pymongo import ReturnDocument
 from datetime import datetime, timezone
 
 
-def create_user(user: UserIGOut):
+def create_user(user: UserIG):
     user_collection = get_user_collection()
 
     existing_user = user_collection.find_one({"username": user.username})
@@ -24,7 +24,7 @@ def get_users(skip: int = 0, limit: int = 10) -> PaginatedResponse:
     user_collection = get_user_collection()
     total = user_collection.count_documents({})
     users_cursor = user_collection.find().skip(skip).limit(limit)
-    users = [UserIG(**user) for user in users_cursor]
+    users = [UserIGOut(**user) for user in users_cursor]
     current_page = skip // limit + 1
 
     metadata = PaginationMetadata(
