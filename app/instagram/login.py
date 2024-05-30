@@ -65,4 +65,6 @@ def login_instagram(
     # Implement update user session here
     update_user_session(username, cl.get_settings())
 
+    logger.info("succesfully save instagram session")
+
     return cl

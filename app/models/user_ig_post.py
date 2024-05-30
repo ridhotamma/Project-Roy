@@ -1,10 +1,8 @@
-from typing import List, Optional
+from typing import List
 from pydantic import BaseModel, Field
-from app.models.common import PyObjectId
 
 
 class UserIGPost(BaseModel):
-    id: Optional[PyObjectId] = Field(default_factory=PyObjectId, alias="_id")
     username: str = Field(..., min_length=3, max_length=50)
     photo_path: str
     caption: str

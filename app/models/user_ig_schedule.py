@@ -1,13 +1,11 @@
 from pydantic import BaseModel, Field, field_validator
 from datetime import datetime
-from typing import List, Union, Optional
+from typing import List, Union
 from app.models.user_ig_post import UserIGPost
 from app.models.user_ig_story import UserIGStory
-from app.models.common import PyObjectId
 
 
 class UserIGSchedule(BaseModel):
-    id: Optional[PyObjectId] = Field(default_factory=PyObjectId, alias="_id")
     action_type: str = Field(..., pattern=r"^(post_content|post_story)$")
     username: str = Field(..., min_length=3, max_length=50)
     scheduled_item: Union[UserIGPost, UserIGStory]
