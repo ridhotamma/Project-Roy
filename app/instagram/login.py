@@ -3,23 +3,24 @@ from instagrapi import Client
 from instagrapi.exceptions import LoginRequired
 from app.crud.user_ig import update_user_session
 from app.proxy.utils import is_proxy_usable
-
-import logging
-
-logger = logging.getLogger()
+from app.logger.config import logger
 
 
 def login_instagram(
     username: str, password: str, proxy: str = None, session: Dict = None
 ):
-    print("Trying to login instagram...")
+    logger.info("Try to Logging to Instagram")
 
     cl = Client()
 
     if proxy and is_proxy_usable(proxy):
+        usability = "usable" if is_proxy_usable(proxy) else "not usable"
+        logger.info("Proxy {} is {}".format(proxy, usability))
         cl.set_proxy(proxy)
 
     if session:
+        logger.info("Trying to login with session...")
+
         try:
             cl.set_settings(session)
             cl.login(username, password)
@@ -48,13 +49,13 @@ def login_instagram(
 
     if not login_via_session:
         try:
-            print(
+            logger.info(
                 "Attempting to login via username and password. username: %s" % username
             )
             if cl.login(username, password):
                 login_via_pw = True
         except Exception as e:
-            print("Couldn't login user using username and password: %s" % e)
+            logger.info("Couldn't login user using username and password: %s" % e)
             login_via_pw = False
 
     if not login_via_pw and not login_via_session:

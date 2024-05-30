@@ -16,7 +16,10 @@ router = APIRouter()
 @router.post("/v1/instagram/test-login", response_model=dict)
 async def test_login_instagram(request: LoginRequest):
     try:
-        cl = login_instagram(request.username, request.password)
+        user = get_user(request.username)
+        cl = login_instagram(
+            request.username, request.password, user.proxy_url, user.session
+        )
         update_user_session(request.username, cl.get_settings())
         user = get_user(request.username)
         return JSONResponse(
@@ -24,7 +27,7 @@ async def test_login_instagram(request: LoginRequest):
             content={
                 "status_code": status.HTTP_200_OK,
                 "message": "Login success",
-                "data": user,
+                "data": user.model_dump(),
             },
         )
     except Exception as e:
