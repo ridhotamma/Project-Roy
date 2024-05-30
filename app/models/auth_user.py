@@ -1,9 +1,11 @@
 from datetime import datetime, timezone
 from typing import Optional, List
 from pydantic import BaseModel, EmailStr, Field
+from app.models.common import PyObjectId
 
 
 class AuthUser(BaseModel):
+    id: Optional[PyObjectId] = Field(default_factory=PyObjectId, alias="_id")
     email: EmailStr
     username: str = Field(..., min_length=3, max_length=50)
     password: str = Field(..., min_length=6)

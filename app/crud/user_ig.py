@@ -1,5 +1,5 @@
 from pymongo.errors import DuplicateKeyError
-from app.database import get_user_collection
+from app.database import get_ig_user_collection
 from app.models.user_ig import UserIG, UserIGOut, PaginatedResponse, PaginationMetadata
 from fastapi import HTTPException, status
 from pymongo import ReturnDocument
@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 
 
 def create_user(user: UserIG):
-    user_collection = get_user_collection()
+    user_collection = get_ig_user_collection()
 
     existing_user = user_collection.find_one({"username": user.username})
 
@@ -21,7 +21,7 @@ def create_user(user: UserIG):
 
 
 def get_users(skip: int = 0, limit: int = 10) -> PaginatedResponse:
-    user_collection = get_user_collection()
+    user_collection = get_ig_user_collection()
     total = user_collection.count_documents({})
     users_cursor = user_collection.find().skip(skip).limit(limit)
     users = [UserIGOut(**user) for user in users_cursor]
@@ -35,7 +35,7 @@ def get_users(skip: int = 0, limit: int = 10) -> PaginatedResponse:
 
 
 def get_user(username: str):
-    user_collection = get_user_collection()
+    user_collection = get_ig_user_collection()
     user = user_collection.find_one({"username": username})
     if user:
         return UserIGOut(**user)
@@ -43,7 +43,7 @@ def get_user(username: str):
 
 
 def update_user(username: str, user: UserIGOut):
-    user_collection = get_user_collection()
+    user_collection = get_ig_user_collection()
     result = user_collection.update_one({"username": username}, {"$set": user.dict()})
     if result.matched_count:
         return user
@@ -51,7 +51,7 @@ def update_user(username: str, user: UserIGOut):
 
 
 def delete_user(username: str):
-    user_collection = get_user_collection()
+    user_collection = get_ig_user_collection()
     result = user_collection.delete_one({"username": username})
     if result.deleted_count:
         return {"detail": "User deleted"}
@@ -59,7 +59,7 @@ def delete_user(username: str):
 
 
 def update_user_session(username: str, session_data: dict):
-    user_collection = get_user_collection()
+    user_collection = get_ig_user_collection()
     session = {
         "uuids": session_data.get("uuids", {}),
         "cookies": session_data.get("cookies", {}),

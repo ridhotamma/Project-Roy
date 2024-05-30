@@ -9,7 +9,7 @@ def get_database():
     return db
 
 
-def get_user_collection():
+def get_ig_user_collection():
     return get_database()["users"]
 
 
