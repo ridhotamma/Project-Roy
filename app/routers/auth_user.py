@@ -18,12 +18,12 @@ from app.config import SECRET_KEY, ALGORITHM
 router = APIRouter()
 
 
-@router.post("/register", response_model=AuthUserOut)
+@router.post("/register/", response_model=AuthUserOut)
 def register_user(user: AuthUserIn):
     return create_user(user)
 
 
-@router.post("/token", response_model=LoginResult)
+@router.post("/token/", response_model=LoginResult)
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     credentials = authenticate_user(form_data.username, form_data.password)
     if not credentials:
@@ -35,7 +35,7 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     return credentials
 
 
-@router.post("/refresh-token", response_model=Dict[str, str])
+@router.post("/refresh-token/", response_model=Dict[str, str])
 async def refresh_access_token(refresh_token: str = Header(...)):
     username = verify_token(refresh_token)
     access_token_expires = timedelta(minutes=30)
@@ -45,7 +45,7 @@ async def refresh_access_token(refresh_token: str = Header(...)):
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@router.get("/users", response_model=PaginatedResponse)
+@router.get("/users/", response_model=PaginatedResponse)
 async def get_users(skip: int = Query(0, ge=0), limit: int = Query(10, ge=1)):
     return get_auth_users(skip, limit)
 
@@ -66,7 +66,7 @@ async def update_user(username: str, user: AuthUserIn):
     return update_auth_user(username, user)
 
 
-@router.get("/me", response_model=AuthUserOut)
+@router.get("/me/", response_model=AuthUserOut)
 def read_users_me(token: str = Header(...)):
     username = verify_token(token, SECRET_KEY, ALGORITHM)
     user = get_user_by_username(username)

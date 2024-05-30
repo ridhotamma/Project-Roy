@@ -75,17 +75,13 @@ app.middleware("http")(auth_middleware)
 # Routers
 app.include_router(auth_user.router, prefix="/api/v1/auth", tags=["Authentication"])
 app.include_router(user_ig.router, prefix="/api/v1", tags=["Instagram User"])
-app.include_router(user_ig_post.router, prefix="/api/v1/auth", tags=["Instagram Post"])
+app.include_router(user_ig_post.router, prefix="/api/v1", tags=["Instagram Post"])
+app.include_router(user_ig_story.router, prefix="/api/v1", tags=["Instagram Story"])
 app.include_router(
-    user_ig_story.router, prefix="/api/v1/auth", tags=["Instagram Story"]
+    user_ig_schedule.router, prefix="/api/v1", tags=["Instagram Upload Schedule"]
 )
-app.include_router(
-    user_ig_schedule.router, prefix="/api/v1/auth", tags=["Instagram Upload Schedule"]
-)
-app.include_router(
-    instagram.router, prefix="/api/v1/auth", tags=["Instagram Upload API"]
-)
-app.include_router(proxy.router, prefix="/api/v1/auth", tags=["Proxy"])
+app.include_router(instagram.router, prefix="/api/v1", tags=["Instagram Upload API"])
+app.include_router(proxy.router, prefix="/api/v1", tags=["Proxy"])
 
 # Main entry point
 if __name__ == "__main__":
