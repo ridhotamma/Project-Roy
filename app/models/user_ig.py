@@ -79,6 +79,12 @@ class UserIG(BaseModel):
         }
 
 
+class UserIGOut(BaseModel):
+    username: str = Field(..., min_length=3, max_length=50)
+    proxy_url: Optional[str] = Field(None, pattern=r"^http://.*|https://.*")
+    session: Optional[Session] = None
+
+
 class LoginRequest(BaseModel):
     username: Annotated[str, Form()]
     password: Annotated[str, Form()]
@@ -108,4 +114,4 @@ class PaginationMetadata(BaseModel):
 
 class PaginatedResponse(BaseModel):
     metadata: PaginationMetadata
-    data: List[UserIG]
+    data: List[UserIGOut]

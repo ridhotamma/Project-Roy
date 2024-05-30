@@ -17,8 +17,12 @@ router = APIRouter()
 async def test_login_instagram(request: LoginRequest):
     try:
         user = get_user(request.username)
+
         cl = login_instagram(
-            request.username, request.password, user.proxy_url, user.session
+            request.username,
+            request.password,
+            user.proxy_url,
+            user.session.model_dump(),
         )
         update_user_session(request.username, cl.get_settings())
         user = get_user(request.username)

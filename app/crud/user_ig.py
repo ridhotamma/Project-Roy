@@ -1,12 +1,12 @@
 from pymongo.errors import DuplicateKeyError
 from app.database import get_user_collection
-from app.models.user_ig import UserIG, PaginatedResponse, PaginationMetadata
+from app.models.user_ig import UserIG, UserIGOut, PaginatedResponse, PaginationMetadata
 from fastapi import HTTPException, status
 from pymongo import ReturnDocument
 from datetime import datetime, timezone
 
 
-def create_user(user: UserIG):
+def create_user(user: UserIGOut):
     user_collection = get_user_collection()
 
     existing_user = user_collection.find_one({"username": user.username})
@@ -38,11 +38,11 @@ def get_user(username: str):
     user_collection = get_user_collection()
     user = user_collection.find_one({"username": username})
     if user:
-        return UserIG(**user)
+        return UserIGOut(**user)
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
 
-def update_user(username: str, user: UserIG):
+def update_user(username: str, user: UserIGOut):
     user_collection = get_user_collection()
     result = user_collection.update_one({"username": username}, {"$set": user.dict()})
     if result.matched_count:

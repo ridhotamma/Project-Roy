@@ -18,6 +18,9 @@ def login_instagram(
         logger.info("Proxy {} is {}".format(proxy, usability))
         cl.set_proxy(proxy)
 
+    login_via_session = False
+    login_via_pw = False
+
     if session:
         logger.info("Trying to login with session...")
 
@@ -44,8 +47,6 @@ def login_instagram(
         except Exception as e:
             logger.info("Couldn't login user using session information: %s" % e)
             login_via_session = False
-    else:
-        login_via_session = False
 
     if not login_via_session:
         try:
