@@ -3,7 +3,7 @@ from instagrapi import Client
 from instagrapi.exceptions import LoginRequired
 from app.crud.user_ig import update_user_session
 from app.proxy.utils import is_proxy_usable
-from app.logger.config import logger
+from app.logger.utils import logger
 
 
 def login_instagram(

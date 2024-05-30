@@ -14,7 +14,7 @@ from app.crud.auth_user import (
     get_auth_users,
 )
 from app.config import SECRET_KEY, ALGORITHM
-from app.logger.config import logger
+from app.logger.utils import logger
 
 router = APIRouter()
 

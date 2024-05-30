@@ -7,6 +7,7 @@ from app.config import (
     AWS_SECRET_ACCESS_KEY,
     AWS_REGION,
     AWS_S3_BUCKET_NAME,
+    AWS_CLOUDFRONT_DOMAIN_NAME,
 )
 
 
@@ -49,5 +50,5 @@ def upload_to_s3(file_name, object_name=None):
             },
         )
 
-    s3_url = f"https://{AWS_S3_BUCKET_NAME}.s3.{AWS_REGION}.amazonaws.com/{object_name}"
-    return s3_url
+    cloudfront_url = f"{AWS_CLOUDFRONT_DOMAIN_NAME}/{object_name}"
+    return cloudfront_url
