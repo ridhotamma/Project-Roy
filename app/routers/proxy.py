@@ -5,7 +5,7 @@ from app.proxy.utils import validate_proxies_concurrently
 router = APIRouter()
 
 
-@router.get("/v1/proxies/validate", response_model=dict)
+@router.get("/proxies/validate", response_model=dict)
 async def validate_proxies(proxy_urls: List[str] = Query(...)):
     try:
         usable_proxies = validate_proxies_concurrently(proxy_urls)

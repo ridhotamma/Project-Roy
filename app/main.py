@@ -31,6 +31,7 @@ app = FastAPI(
 )
 
 
+# Custom HTTP exception handler
 @app.exception_handler(HTTPException)
 async def custom_http_exception_handler(request: Request, exc: HTTPException):
     return JSONResponse(
@@ -39,13 +40,14 @@ async def custom_http_exception_handler(request: Request, exc: HTTPException):
     )
 
 
+# Custom validation exception handler
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     errors = []
     missing_fields = set()
 
-    for e in exc.errors():
-        field = e["loc"][-1]
+    for error in exc.errors():
+        field = error["loc"][-1]
         message = f"{field.capitalize()} is Required"
         errors.append({"field": field, "message": message})
         missing_fields.add(field)
@@ -61,22 +63,31 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     )
 
 
+# Root endpoint
 @app.get("/ping")
 def read_root():
     return {"message": "Pong"}
 
 
+# Middleware
 app.middleware("http")(auth_middleware)
 
-app.include_router(auth_user.router, prefix="/auth", tags=["Authentication"])
-app.include_router(user_ig.router, tags=["Instagram User"])
-app.include_router(user_ig_post.router, tags=["Instagram Post"])
-app.include_router(user_ig_story.router, tags=["Instagram Story"])
-app.include_router(user_ig_schedule.router, tags=["Instagram Upload Schedule"])
-app.include_router(instagram.router, tags=["Instagram Upload API"])
-app.include_router(proxy.router, tags=["Proxy"])
+# Routers
+app.include_router(auth_user.router, prefix="/api/v1/auth", tags=["Authentication"])
+app.include_router(user_ig.router, prefix="/api/v1", tags=["Instagram User"])
+app.include_router(user_ig_post.router, prefix="/api/v1/auth", tags=["Instagram Post"])
+app.include_router(
+    user_ig_story.router, prefix="/api/v1/auth", tags=["Instagram Story"]
+)
+app.include_router(
+    user_ig_schedule.router, prefix="/api/v1/auth", tags=["Instagram Upload Schedule"]
+)
+app.include_router(
+    instagram.router, prefix="/api/v1/auth", tags=["Instagram Upload API"]
+)
+app.include_router(proxy.router, prefix="/api/v1/auth", tags=["Proxy"])
 
-
+# Main entry point
 if __name__ == "__main__":
     import uvicorn
 

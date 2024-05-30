@@ -13,7 +13,7 @@ from app.models.user_ig import (
 router = APIRouter()
 
 
-@router.post("/v1/instagram/test-login", response_model=dict)
+@router.post("/instagram/test-login", response_model=dict)
 async def test_login_instagram(request: LoginRequest):
     try:
         user = get_user(request.username)
@@ -42,17 +42,28 @@ async def test_login_instagram(request: LoginRequest):
         )
 
 
-@router.post("/v1/instagram/image-story", response_model=dict)
+@router.post("/instagram/image-story", response_model=dict)
 async def create_image_story(request: CreateStoryRequest):
     try:
         user = get_user(request.username)
-        if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
-            )
-        cl = login_instagram(user.username, user.password)
+        user_session = user.session.model_dump() if user.session else None
+        cl = login_instagram(
+            request.username,
+            request.password,
+            user.proxy_url,
+            user_session,
+        )
+
+        cl = login_instagram(user.username, user.password, user.proxy_url, user_session)
         story_result = post_image_story(cl, request.photo_path)
-        return {"detail": f"Story posted: {story_result}"}
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content={
+                "status_code": status.HTTP_200_OK,
+                "message": "Upload story success",
+                "data": story_result,
+            },
+        )
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -60,17 +71,29 @@ async def create_image_story(request: CreateStoryRequest):
         )
 
 
-@router.post("/v1/instagram/video-story", response_model=dict)
+@router.post("/instagram/video-story", response_model=dict)
 async def create_video_story(request: CreateVideoStoryRequest):
     try:
         user = get_user(request.username)
-        if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
-            )
-        cl = login_instagram(user.username, user.password)
+        user_session = user.session.model_dump() if user.session else None
+        cl = login_instagram(
+            request.username,
+            request.password,
+            user.proxy_url,
+            user_session,
+        )
+
+        cl = login_instagram(user.username, user.password, user.proxy_url, user_session)
         story_result = post_video_story(cl, request.photo_path)
-        return {"detail": f"Story posted: {story_result}"}
+
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content={
+                "status_code": status.HTTP_200_OK,
+                "message": "Upload story success",
+                "data": story_result,
+            },
+        )
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -78,17 +101,29 @@ async def create_video_story(request: CreateVideoStoryRequest):
         )
 
 
-@router.post("/v1/instagram/post-content", response_model=dict)
+@router.post("/instagram/post-content", response_model=dict)
 async def create_post(request: CreatePostRequest):
     try:
         user = get_user(request.username)
-        if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
-            )
-        cl = login_instagram(user.username, user.password)
+        user_session = user.session.model_dump() if user.session else None
+        cl = login_instagram(
+            request.username,
+            request.password,
+            user.proxy_url,
+            user_session,
+        )
+
+        cl = login_instagram(user.username, user.password, user.proxy_url, user_session)
         content_result = post_content(cl, request.photo_path, request.caption)
-        return {"detail": f"Content posted: {content_result}"}
+
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content={
+                "status_code": status.HTTP_200_OK,
+                "message": "Upload post success",
+                "data": content_result,
+            },
+        )
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

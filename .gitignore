@@ -12,4 +12,6 @@ ENV/
 env/
 
 #log
+app.log
+/app.log
 ./app.log

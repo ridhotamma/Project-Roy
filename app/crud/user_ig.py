@@ -43,7 +43,7 @@ def get_user(username: str):
     user = user_collection.find_one({"username": username})
     if user:
         user["id"] = user.pop("_id")
-        return UserIGOut(**user)
+        return UserIG(**user)
 
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
