@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import Optional, List, Dict, Any, Annotated
 from fastapi import Form
+import uuid
 
 
 class Session(BaseModel):
@@ -40,6 +41,7 @@ class Session(BaseModel):
 
 
 class UserIG(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     username: str = Field(..., min_length=3, max_length=50)
     password: str = Field(..., min_length=6)
     proxy_url: Optional[str] = Field(None, pattern=r"^http://.*|https://.*")

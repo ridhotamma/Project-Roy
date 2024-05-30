@@ -3,9 +3,11 @@ from datetime import datetime
 from typing import List, Union
 from app.models.user_ig_post import UserIGPost
 from app.models.user_ig_story import UserIGStory
+import uuid
 
 
 class UserIGSchedule(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     action_type: str = Field(..., pattern=r"^(post_content|post_story)$")
     username: str = Field(..., min_length=3, max_length=50)
     scheduled_item: Union[UserIGPost, UserIGStory]
