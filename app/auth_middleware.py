@@ -7,7 +7,13 @@ from app.auth.jwt import verify_token
 from app.crud.auth_user import get_user_by_username
 from app.config import SECRET_KEY, ALGORITHM
 
-EXCLUDED_PATHS = ["/ping", "/api/v1/auth/token", "/docs", "/openapi.json"]
+EXCLUDED_PATHS = [
+    "/ping",
+    "/api/v1/auth/token",
+    "/api/v1/auth/refresh-token",
+    "/docs",
+    "/openapi.json",
+]
 
 
 async def auth_middleware(request: Request, call_next):
