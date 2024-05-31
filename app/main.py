@@ -46,6 +46,18 @@ async def custom_http_exception_handler(request: Request, exc: HTTPException):
     )
 
 
+# Custom HTTP exception handler
+@app.exception_handler(Exception)
+async def custom_any_exception_handler(request: Request, exc: HTTPException):
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        content={
+            "status_code": status.HTTP_500_INTERNAL_SERVER_ERROR,
+            "message": str(exc),
+        },
+    )
+
+
 # Custom validation exception handler
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):

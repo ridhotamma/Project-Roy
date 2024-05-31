@@ -28,9 +28,7 @@ def get_schedules(
         schedule_collection.find(schedule_filter).skip(skip).limit(limit)
     )
     user_schedules = [UserIGSchedule(**schedule) for schedule in user_schedules_cursor]
-
     current_page = skip // limit + 1
-
     metadata = PaginationMetadata(
         total=total, current_page=current_page, page_size=limit
     )
