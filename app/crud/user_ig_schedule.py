@@ -20,7 +20,7 @@ def create_schedule(schedule: UserIGSchedule):
 def get_schedules(
     skip: int = 0, limit: int = 10, is_active: bool = False
 ) -> PaginatedResponse:
-    now = datetime.now(timezone.utc())
+    now = datetime.now(timezone.utc)
     schedule_collection = get_schedule_collection()
     schedule_filter = {"scheduled_time": {"$gt": now}} if is_active else {}
     total = schedule_collection.count_documents(schedule_filter)

@@ -73,7 +73,7 @@ def add_image_to_gallery(gallery_id: str, image: GalleryImage):
         )
     image.update_timestamp()
     gallery["images"].append(image.model_dump())
-    gallery["updated_at"] = datetime.now(timezone.utc())
+    gallery["updated_at"] = datetime.now(timezone.utc)
     result = gallery_collection.update_one({"id": gallery_id}, {"$set": gallery})
     if result.modified_count:
         return Gallery(**gallery)
