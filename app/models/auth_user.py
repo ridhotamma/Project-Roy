@@ -65,6 +65,7 @@ class AuthUserIn(BaseModel):
             "example": {
                 "email": "user@example.com",
                 "username": "johndoe",
+                "password": "secretpassword",
                 "profile_picture": "http://example.com/profile.jpg",
             }
         }

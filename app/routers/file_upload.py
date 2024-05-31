@@ -1,6 +1,6 @@
 from fastapi import APIRouter, UploadFile, File, status
 from fastapi.exceptions import HTTPException
-from app.crud.image_upload import upload_to_s3
+from app.crud.file_upload import upload_to_s3
 
 router = APIRouter()
 

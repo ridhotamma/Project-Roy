@@ -42,7 +42,7 @@ def mock_user_data(test_db):
 @pytest.fixture(scope="module")
 def access_token(test_client, mock_user_data):
     response = test_client.post(
-        "/auth/token",
+        "/api/v1/auth/token",
         data={
             "username": mock_user_data[0]["username"],
             "password": "testpassword1",

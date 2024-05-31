@@ -37,15 +37,15 @@ def upload_to_s3(file_name, object_name=None):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
-                "status_code": status.HTTP_404_NOT_FOUND,
+                "status_code": status.HTTP_403_FORBIDDEN,
                 "message": "[S3 Upload] Credentials Is not Provided",
             },
         )
     except Exception as e:
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail={
-                "status_code": status.HTTP_404_NOT_FOUND,
+                "status_code": status.HTTP_500_INTERNAL_SERVER_ERROR,
                 "message": f"[S3 Upload] Unexpected Error: {e}",
             },
         )

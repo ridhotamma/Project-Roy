@@ -9,7 +9,7 @@ from app.logger.utils import logger
 def login_instagram(
     username: str, password: str, proxy: str = None, session: Dict = None
 ):
-    logger.info("Try to Logging to Instagram")
+    logger.info(f"[{username}] Trying to Login to Instagram")
 
     cl = Client()
 
@@ -22,7 +22,7 @@ def login_instagram(
     login_via_pw = False
 
     if session:
-        logger.info("Trying to login with session...")
+        logger.info(f"[{username}] Trying to login with session")
 
         try:
             cl.set_settings(session)
@@ -33,7 +33,7 @@ def login_instagram(
                 cl.get_timeline_feed()
             except LoginRequired:
                 logger.info(
-                    "Session is invalid, need to login via username and password"
+                    f"[{username}] Session is invalid, need to login via username and password"
                 )
 
                 old_settings = cl.get_settings()
@@ -45,26 +45,33 @@ def login_instagram(
                 cl.login(username, password)
             login_via_session = True
         except Exception as e:
-            logger.info("Couldn't login user using session information: %s" % e)
+            logger.info(
+                f"[{username}] Couldn't login user using session information: %s" % e
+            )
             login_via_session = False
 
     if not login_via_session:
         try:
             logger.info(
-                "Attempting to login via username and password. username: %s" % username
+                f"[{username}] Attempting to login via username and password. username: %s"
+                % username
             )
             if cl.login(username, password):
                 login_via_pw = True
         except Exception as e:
-            logger.info("Couldn't login user using username and password: %s" % e)
+            logger.info(
+                f"[{username}] Couldn't login user using username and password: %s" % e
+            )
             login_via_pw = False
 
     if not login_via_pw and not login_via_session:
-        raise Exception("Couldn't login user with either password or session")
+        raise Exception(
+            f"[{username}] Couldn't login user with either password or session"
+        )
 
     # Implement update user session here
     update_user_session(username, cl.get_settings())
 
-    logger.info("succesfully save instagram session")
+    logger.info(f"[{username}] succesfully save instagram session")
 
     return cl

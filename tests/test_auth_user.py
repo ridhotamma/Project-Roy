@@ -1,6 +1,6 @@
 def test_register_user(test_client, test_db, access_token):
     response = test_client.post(
-        "/auth/register",
+        "/api/v1/auth/register",
         json={
             "username": "newuser2",
             "email": "newuser2@example.com",
@@ -16,7 +16,7 @@ def test_register_user(test_client, test_db, access_token):
 
 def test_login_user(test_client, test_db, mock_user_data):
     response = test_client.post(
-        "/auth/token",
+        "/api/v1/auth/token",
         data={
             "username": mock_user_data[0]["username"],
             "password": "testpassword1",
