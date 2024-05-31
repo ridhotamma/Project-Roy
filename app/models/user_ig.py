@@ -41,7 +41,7 @@ class Session(BaseModel):
 
 
 class UserIG(BaseModel):
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     username: str = Field(..., min_length=3, max_length=50)
     password: str = Field(..., min_length=6)
     proxy_url: Optional[str] = Field(None, pattern=r"^http://.*|https://.*")
@@ -82,6 +82,7 @@ class UserIG(BaseModel):
 
 
 class UserIGOut(BaseModel):
+    user_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     username: str = Field(..., min_length=3, max_length=50)
     proxy_url: Optional[str] = Field(None, pattern=r"^http://.*|https://.*")
     session: Optional[Session] = None

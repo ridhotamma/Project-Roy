@@ -18,6 +18,13 @@ from app.config import ACCESS_TOKEN_EXPIRE_MINUTES
 
 def create_user(user: AuthUserIn) -> AuthUserIn:
     user_collection = get_auth_user_collection()
+
+    existing_user = user_collection.find_one(
+        {"$or": [{"email": user.email}, {"username": user.username}]}
+    )
+    if existing_user:
+        raise ValueError("Username or email already exists")
+
     user.password = hash_password(user.password)
     user_collection.insert_one(user.model_dump())
     return user

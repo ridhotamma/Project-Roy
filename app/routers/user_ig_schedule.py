@@ -17,16 +17,16 @@ def get_schedules(
     return crud_schedule.get_schedules(skip, limit, is_active)
 
 
-@router.get("/ig-schedules/{username}", response_model=UserIGSchedule)
-async def get_schedule(username: str):
-    return crud_schedule.get_schedule(username)
+@router.get("/ig-schedules/{id}", response_model=UserIGSchedule)
+async def get_schedule(id: str):
+    return crud_schedule.get_schedule(id)
 
 
-@router.put("/ig-schedules/{username}", response_model=UserIGSchedule)
-async def update_schedule(username: str, schedule: UserIGSchedule):
-    return crud_schedule.update_schedule(username, schedule)
+@router.put("/ig-schedules/{id}", response_model=UserIGSchedule)
+async def update_schedule(id: str, schedule: UserIGSchedule):
+    return crud_schedule.update_schedule(id, schedule)
 
 
-@router.delete("/ig-schedules/{username}", response_model=dict)
-async def delete_schedule(username: str):
-    return crud_schedule.delete_schedule(username)
+@router.delete("/ig-schedules/{id}", response_model=dict)
+async def delete_schedule(id: str):
+    return crud_schedule.delete_schedule(id)

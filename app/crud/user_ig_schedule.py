@@ -41,9 +41,9 @@ def get_schedules(
     return PaginatedResponse(metadata=metadata, data=user_schedules)
 
 
-def get_schedule(username: str):
+def get_schedule(id: str):
     schedule_collection = get_schedule_collection()
-    schedule = schedule_collection.find_one({"username": username})
+    schedule = schedule_collection.find_one({"id": id})
     if schedule:
         return UserIGSchedule(**schedule)
     raise HTTPException(
@@ -51,11 +51,9 @@ def get_schedule(username: str):
     )
 
 
-def update_schedule(username: str, schedule: UserIGSchedule):
+def update_schedule(id: str, schedule: UserIGSchedule):
     schedule_collection = get_schedule_collection()
-    result = schedule_collection.update_one(
-        {"username": username}, {"$set": schedule.model_dump()}
-    )
+    result = schedule_collection.update_one({"id": id}, {"$set": schedule.model_dump()})
     if result.matched_count:
         return schedule
     raise HTTPException(
@@ -63,9 +61,9 @@ def update_schedule(username: str, schedule: UserIGSchedule):
     )
 
 
-def delete_schedule(username: str):
+def delete_schedule(id: str):
     schedule_collection = get_schedule_collection()
-    result = schedule_collection.delete_one({"username": username})
+    result = schedule_collection.delete_one({"id": id})
     if result.deleted_count:
         return {"detail": "Schedule deleted"}
     raise HTTPException(

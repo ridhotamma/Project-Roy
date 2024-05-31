@@ -15,16 +15,16 @@ def get_stories(skip: int = Query(0, ge=0), limit: int = Query(10, ge=1)):
     return crud_story.get_stories(skip, limit)
 
 
-@router.get("/ig-stories/{username}", response_model=UserIGStory)
-async def get_story(username: str):
-    return crud_story.get_story(username)
+@router.get("/ig-stories/{id}", response_model=UserIGStory)
+async def get_story(id: str):
+    return crud_story.get_story(id)
 
 
-@router.put("/ig-stories/{username}", response_model=UserIGStory)
-async def update_story(username: str, story: UserIGStory):
-    return crud_story.update_story(username, story)
+@router.put("/ig-stories/{id}", response_model=UserIGStory)
+async def update_story(id: str, story: UserIGStory):
+    return crud_story.update_story(id, story)
 
 
-@router.delete("/ig-stories/{username}", response_model=dict)
-async def delete_story(username: str):
-    return crud_story.delete_story(username)
+@router.delete("/ig-stories/{id}", response_model=dict)
+async def delete_story(id: str):
+    return crud_story.delete_story(id)

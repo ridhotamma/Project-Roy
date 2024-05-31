@@ -56,9 +56,9 @@ def update_post(username: str, post: UserIGPost):
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
 
 
-def delete_post(username: str):
+def delete_post(id: str):
     post_collection = get_post_collection()
-    result = post_collection.delete_one({"username": username})
+    result = post_collection.delete_one({"id": id})
     if result.deleted_count:
         return {"detail": "Post deleted"}
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")

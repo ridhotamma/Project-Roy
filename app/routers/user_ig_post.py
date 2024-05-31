@@ -15,16 +15,16 @@ def get_posts(skip: int = Query(0, ge=0), limit: int = Query(10, ge=1)):
     return crud_post.get_posts(skip, limit)
 
 
-@router.get("/ig-posts/{username}", response_model=UserIGPost)
-async def get_post(username: str):
-    return crud_post.get_post(username)
+@router.get("/ig-posts/{id}", response_model=UserIGPost)
+async def get_post(id: str):
+    return crud_post.get_post(id)
 
 
-@router.put("/ig-posts/{username}", response_model=UserIGPost)
-async def update_post(username: str, post: UserIGPost):
-    return crud_post.update_post(username, post)
+@router.put("/ig-posts/{id}", response_model=UserIGPost)
+async def update_post(id: str, post: UserIGPost):
+    return crud_post.update_post(id, post)
 
 
-@router.delete("/ig-posts/{username}", response_model=dict)
-async def delete_post(username: str):
-    return crud_post.delete_post(username)
+@router.delete("/ig-posts/{id}", response_model=dict)
+async def delete_post(id: str):
+    return crud_post.delete_post(id)
