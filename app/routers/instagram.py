@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 from app.instagram.post import post_image_story, post_video_story, post_content
 from app.crud.user_ig import get_user, update_user_session
 from app.instagram.login import login_instagram
+from app.instagram.user import get_user_followers, get_user_followings, get_user_info
 from app.instagram.utils import (
     download_image,
     delete_image,
@@ -14,6 +15,7 @@ from app.models.user_ig import (
     CreatePostRequest,
     CreateStoryRequest,
     CreateVideoStoryRequest,
+    GetUserRequest,
 )
 
 router = APIRouter()
@@ -50,6 +52,8 @@ async def test_login_instagram(request: LoginRequest):
 
 @router.post("/instagram/image-story", response_model=dict)
 async def create_image_story(request: CreateStoryRequest):
+    save_path = generate_save_path()
+
     try:
         user = get_user(request.username)
         user_session = user.session.model_dump() if user.session else None
@@ -59,9 +63,8 @@ async def create_image_story(request: CreateStoryRequest):
             user.proxy_url,
             user_session,
         )
-
-        cl = login_instagram(user.username, user.password, user.proxy_url, user_session)
-        story_result = post_image_story(cl, request.photo_path)
+        download_image(request.photo_path, save_path)
+        story_result = str(post_image_story(cl, save_path))
         return JSONResponse(
             status_code=status.HTTP_200_OK,
             content={
@@ -75,29 +78,32 @@ async def create_image_story(request: CreateStoryRequest):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to post story: {e}",
         )
+    finally:
+        delete_image(save_path)
 
 
 @router.post("/instagram/video-story", response_model=dict)
 async def create_video_story(request: CreateVideoStoryRequest):
+    save_path = generate_save_path()
+
     try:
         user = get_user(request.username)
         user_session = user.session.model_dump() if user.session else None
         cl = login_instagram(
-            request.username,
-            request.password,
+            user.username,
+            user.password,
             user.proxy_url,
             user_session,
         )
-
-        cl = login_instagram(user.username, user.password, user.proxy_url, user_session)
-        story_result = post_video_story(cl, request.photo_path)
+        download_image(request.photo_path, save_path)
+        story_result = str(post_video_story(cl, save_path))
 
         return JSONResponse(
             status_code=status.HTTP_200_OK,
             content={
                 "status_code": status.HTTP_200_OK,
                 "message": "Upload story success",
-                "data": story_result,
+                "detail": story_result,
             },
         )
     except Exception as e:
@@ -105,6 +111,8 @@ async def create_video_story(request: CreateVideoStoryRequest):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to post story: {e}",
         )
+    finally:
+        delete_image(save_path)
 
 
 @router.post("/instagram/post-content", response_model=dict)
@@ -140,3 +148,99 @@ async def create_post(request: CreatePostRequest):
         )
     finally:
         delete_image(save_path)
+
+
+@router.post("/instagram/followers", response_model=dict)
+async def get_user_followers_by_username(request: GetUserRequest):
+    try:
+        user_logged_in = get_user(request.username_logged_in)
+        user_session = (
+            user_logged_in.session.model_dump() if user_logged_in.session else None
+        )
+
+        cl = login_instagram(
+            user_logged_in.username,
+            user_logged_in.password,
+            user_logged_in.proxy_url,
+            user_session,
+        )
+
+        followers = get_user_followers(cl, request.user_id_target)
+
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content={
+                "status_code": status.HTTP_200_OK,
+                "message": "Upload post success",
+                "detail": {"followers": list(followers)},
+            },
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to get user followers: {e}",
+        )
+
+
+@router.post("/instagram/followings", response_model=dict)
+async def get_user_followings_by_username(request: GetUserRequest):
+    try:
+        user_logged_in = get_user(request.username_logged_in)
+        user_session = (
+            user_logged_in.session.model_dump() if user_logged_in.session else None
+        )
+
+        cl = login_instagram(
+            user_logged_in.username,
+            user_logged_in.password,
+            user_logged_in.proxy_url,
+            user_session,
+        )
+
+        followings = get_user_followings(cl, request.user_id_target)
+
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content={
+                "status_code": status.HTTP_200_OK,
+                "message": "Upload post success",
+                "detail": {"followings": list(followings)},
+            },
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to get user folowings: {e}",
+        )
+
+
+@router.post("/instagram/info", response_model=dict)
+async def get_user_info_by_username(request: GetUserRequest):
+    try:
+        user_logged_in = get_user(request.username_logged_in)
+        user_session = (
+            user_logged_in.session.model_dump() if user_logged_in.session else None
+        )
+
+        cl = login_instagram(
+            user_logged_in.username,
+            user_logged_in.password,
+            user_logged_in.proxy_url,
+            user_session,
+        )
+
+        user_info = get_user_info(cl, request.user_id_target)
+
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content={
+                "status_code": status.HTTP_200_OK,
+                "message": "Upload post success",
+                "detail": {"info": str(user_info)},
+            },
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to get user info: {e}",
+        )

@@ -107,3 +107,8 @@ class CreatePostRequest(BaseModel):
 class CreateVideoStoryRequest(BaseModel):
     username: Annotated[str, Form()]
     photo_path: Annotated[str, Form()]
+
+
+class GetUserRequest(BaseModel):
+    user_id_target: str
+    username_logged_in: str

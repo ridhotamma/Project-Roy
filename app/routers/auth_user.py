@@ -15,7 +15,6 @@ from app.crud.auth_user import (
     get_auth_users,
 )
 from app.config import SECRET_KEY, ALGORITHM
-from app.logger.utils import logger
 
 router = APIRouter()
 
@@ -27,7 +26,6 @@ def register_user(user: AuthUserIn):
 
 @router.post("/token/", response_model=LoginResult)
 def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
-    logger.info(f"User Login with {form_data.username} {form_data.password}")
     credentials = authenticate_user(form_data.username, form_data.password)
     if not credentials:
         raise HTTPException(
