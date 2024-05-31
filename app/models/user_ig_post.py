@@ -1,4 +1,3 @@
-from typing import List
 from pydantic import BaseModel, Field
 import uuid
 
@@ -17,14 +16,3 @@ class UserIGPost(BaseModel):
                 "caption": "This is a caption",
             }
         }
-
-
-class PaginationMetadata(BaseModel):
-    total: int
-    current_page: int
-    page_size: int
-
-
-class PaginatedResponse(BaseModel):
-    metadata: PaginationMetadata
-    data: List[UserIGPost]

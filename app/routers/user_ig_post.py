@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Query
-from app.models.user_ig_post import UserIGPost, PaginatedResponse
+from app.models.user_ig_post import UserIGPost
+from app.models.common import PaginatedResponse
 from app.crud import user_ig_post as crud_post
 
 router = APIRouter()

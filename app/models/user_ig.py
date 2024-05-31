@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional, List, Dict, Any, Annotated
+from typing import Optional, Dict, Any, Annotated
 from fastapi import Form
 import uuid
 
@@ -107,14 +107,3 @@ class CreatePostRequest(BaseModel):
 class CreateVideoStoryRequest(BaseModel):
     username: Annotated[str, Form()]
     photo_path: Annotated[str, Form()]
-
-
-class PaginationMetadata(BaseModel):
-    total: int
-    current_page: int
-    page_size: int
-
-
-class PaginatedResponse(BaseModel):
-    metadata: PaginationMetadata
-    data: List[UserIGOut]

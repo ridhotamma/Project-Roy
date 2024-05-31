@@ -5,7 +5,8 @@ from fastapi import APIRouter, HTTPException, status, Depends, Header, Query
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.auth.jwt import verify_token, create_access_token
-from app.models.auth_user import AuthUserIn, LoginResult, AuthUserOut, PaginatedResponse
+from app.models.auth_user import AuthUserIn, LoginResult, AuthUserOut
+from app.models.common import PaginatedResponse
 from app.crud.auth_user import (
     create_user,
     authenticate_user,

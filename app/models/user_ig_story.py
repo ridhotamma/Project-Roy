@@ -1,4 +1,3 @@
-from typing import List
 from pydantic import BaseModel, Field
 import uuid
 
@@ -15,14 +14,3 @@ class UserIGStory(BaseModel):
                 "photo_path": "path/to/photo.jpg",
             }
         }
-
-
-class PaginationMetadata(BaseModel):
-    total: int
-    current_page: int
-    page_size: int
-
-
-class PaginatedResponse(BaseModel):
-    metadata: PaginationMetadata
-    data: List[UserIGStory]

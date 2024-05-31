@@ -1,6 +1,7 @@
 from pymongo.errors import DuplicateKeyError
 from app.database import get_story_collection
-from app.models.user_ig_story import UserIGStory, PaginatedResponse, PaginationMetadata
+from app.models.user_ig_story import UserIGStory
+from app.models.common import PaginatedResponse, PaginationMetadata
 from fastapi import HTTPException, status
 
 

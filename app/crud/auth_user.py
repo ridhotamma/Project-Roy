@@ -6,12 +6,8 @@ from fastapi.exceptions import HTTPException
 from fastapi import status
 from app.auth.utils import hash_password, verify_password
 from app.auth.jwt import create_access_token, create_refresh_token
-from app.models.auth_user import (
-    AuthUserOut,
-    AuthUserIn,
-    PaginatedResponse,
-    PaginationMetadata,
-)
+from app.models.auth_user import AuthUserOut, AuthUserIn
+from app.models.common import PaginatedResponse, PaginationMetadata
 from app.database import get_auth_user_collection
 from app.config import ACCESS_TOKEN_EXPIRE_MINUTES
 

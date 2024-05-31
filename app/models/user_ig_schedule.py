@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, field_validator
 from datetime import datetime
-from typing import List, Union
+from typing import Union
 from app.models.user_ig_post import UserIGPost
 from app.models.user_ig_story import UserIGStory
 import uuid
@@ -40,14 +40,3 @@ class UserIGSchedule(BaseModel):
                 "scheduled_time": "2024-05-30T10:00:00",
             }
         }
-
-
-class PaginationMetadata(BaseModel):
-    total: int
-    current_page: int
-    page_size: int
-
-
-class PaginatedResponse(BaseModel):
-    metadata: PaginationMetadata
-    data: List[UserIGSchedule]

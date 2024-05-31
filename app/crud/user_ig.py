@@ -1,6 +1,7 @@
 from pymongo.errors import DuplicateKeyError
 from app.database import get_ig_user_collection
-from app.models.user_ig import UserIG, UserIGOut, PaginatedResponse, PaginationMetadata
+from app.models.user_ig import UserIG, UserIGOut
+from app.models.common import PaginatedResponse, PaginationMetadata
 from fastapi import HTTPException, status
 from pymongo import ReturnDocument
 from datetime import datetime, timezone

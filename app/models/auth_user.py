@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from typing import Optional, List
+from typing import Optional
 from pydantic import BaseModel, EmailStr, Field
 import uuid
 
@@ -93,14 +93,3 @@ class LoginResult(BaseModel):
     access_token: str
     refresh_token: str
     token_type: str
-
-
-class PaginationMetadata(BaseModel):
-    total: int
-    current_page: int
-    page_size: int
-
-
-class PaginatedResponse(BaseModel):
-    metadata: PaginationMetadata
-    data: List[AuthUserOut]

@@ -2,7 +2,8 @@ from pymongo.errors import DuplicateKeyError
 from fastapi import HTTPException, status
 
 from app.database import get_post_collection, get_ig_user_collection
-from app.models.user_ig_post import UserIGPost, PaginatedResponse, PaginationMetadata
+from app.models.user_ig_post import UserIGPost
+from app.models.common import PaginatedResponse, PaginationMetadata
 
 
 def create_post(post: UserIGPost):

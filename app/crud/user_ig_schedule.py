@@ -1,10 +1,7 @@
 from pymongo.errors import DuplicateKeyError
 from app.database import get_schedule_collection
-from app.models.user_ig_schedule import (
-    UserIGSchedule,
-    PaginatedResponse,
-    PaginationMetadata,
-)
+from app.models.user_ig_schedule import UserIGSchedule
+from app.models.common import PaginatedResponse, PaginationMetadata
 from fastapi import HTTPException, status
 from datetime import datetime
 
