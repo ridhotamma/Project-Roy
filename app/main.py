@@ -14,6 +14,7 @@ from app.routers import (
     proxy,
     auth_user,
     file_upload,
+    gallery,
 )
 from app.auth_middleware import auth_middleware
 
@@ -117,6 +118,12 @@ app.include_router(
     proxy.router,
     prefix="/api/v1",
     tags=["Proxy"],
+    dependencies=[Depends(oauth2_scheme)],
+)
+app.include_router(
+    gallery.router,
+    prefix="/api/v1",
+    tags=["Gallery"],
     dependencies=[Depends(oauth2_scheme)],
 )
 app.include_router(

@@ -30,3 +30,7 @@ def get_story_collection():
 
 def get_schedule_collection():
     return get_database()["schedules"]
+
+
+def get_gallery_collection():
+    return get_database()["galleries"]
