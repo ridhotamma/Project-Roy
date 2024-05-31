@@ -1,5 +1,5 @@
 from typing import List
-from datetime import datetime
+from datetime import datetime, timezone
 from pymongo.errors import DuplicateKeyError
 from fastapi import HTTPException, status
 from app.database import get_gallery_collection
@@ -72,8 +72,8 @@ def add_image_to_gallery(gallery_id: str, image: GalleryImage):
             status_code=status.HTTP_404_NOT_FOUND, detail="Gallery not found"
         )
     image.update_timestamp()
-    gallery["images"].append(image.dict())
-    gallery["updated_at"] = datetime.utcnow()
+    gallery["images"].append(image.model_dump())
+    gallery["updated_at"] = datetime.now(timezone.utc())
     result = gallery_collection.update_one({"id": gallery_id}, {"$set": gallery})
     if result.modified_count:
         return Gallery(**gallery)
