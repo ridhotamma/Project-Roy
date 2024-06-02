@@ -1,10 +1,9 @@
 # Social Media Post Automation
 
-![GitHub stars](https://img.shields.io/github/stars/yourusername/your-repo-name?style=social)
-![GitHub forks](https://img.shields.io/github/forks/yourusername/your-repo-name?style=social)
-![GitHub issues](https://img.shields.io/github/issues/yourusername/your-repo-name)
-![GitHub license](https://img.shields.io/github/license/yourusername/your-repo-name)
-![Twitter Follow](https://img.shields.io/twitter/follow/yourusername?style=social)
+![GitHub stars](https://img.shields.io/github/stars/ridhotamma/Project-Roy?style=social)
+![GitHub forks](https://img.shields.io/github/forks/ridhotamma/Project-Roy?style=social)
+![GitHub issues](https://img.shields.io/github/issues/ridhotamma/Project-Roy)
+![GitHub license](https://img.shields.io/github/license/ridhotamma/Project-Roy)
 
 ## 🚀 Overview
 
