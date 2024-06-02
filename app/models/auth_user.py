@@ -9,16 +9,12 @@ class AuthUser(BaseModel):
     email: EmailStr
     username: str = Field(..., min_length=3, max_length=50)
     password: str = Field(..., min_length=6)
-    created_at: Optional[datetime] = Field(
-        default_factory=lambda: datetime.now(timezone.utc)
-    )
-    updated_at: Optional[datetime] = Field(
-        default_factory=lambda: datetime.now(timezone.utc)
-    )
+    created_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(timezone.utc))
     profile_picture: Optional[str] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
         json_schema_extra = {
             "example": {
                 "email": "user@example.com",
@@ -60,7 +56,7 @@ class AuthUserIn(BaseModel):
     profile_picture: Optional[str] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
         json_schema_extra = {
             "example": {
                 "email": "user@example.com",
@@ -80,7 +76,7 @@ class AuthUserOut(BaseModel):
     profile_picture: Optional[str] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
         json_schema_extra = {
             "example": {
                 "email": "user@example.com",

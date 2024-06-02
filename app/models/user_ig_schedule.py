@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, model_validator, field_validator
+from pydantic import BaseModel, Field, model_validator
 from datetime import datetime, timezone
 from typing import Union, Optional
 from typing_extensions import Self
@@ -18,15 +18,6 @@ class UserIGSchedule(BaseModel):
     scheduled_time: datetime
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-
-    @field_validator("status_type")
-    @classmethod
-    def must_be_valid_status_type(self, value: str) -> str:
-        valid_status_type = ["success", "failed", "expired", "unprocessed"]
-        if value not in valid_status_type:
-            raise ValueError("status_type is not valid")
-
-        return value
 
     @model_validator(mode="after")
     def validate_scheduled_item(self) -> Self:

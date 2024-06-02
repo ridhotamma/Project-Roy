@@ -38,7 +38,8 @@ app = FastAPI(
 
 # CORS setup
 origins = [
-    "http://localhost",
+    "http://localhost:5173",
+    "http://localhost:5174",
 ]
 
 app.add_middleware(
@@ -159,7 +160,7 @@ app.include_router(
 )
 
 # Main entry point
-if __name__ == "__main__":
+if __name__ == "___main__":
     import uvicorn
 
     uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -35,7 +35,7 @@ export const Login: React.FC = () => {
             <label className='block text-gray-700'>Username</label>
             <input
               {...register('username')}
-              className={`mt-1 p-2 w-full border bg-white ${
+              className={`mt-1 p-2 w-full border bg-white text-black ${
                 errors.username ? 'border-red-500' : 'border-gray-300'
               } rounded-lg`}
               type='text'
@@ -50,7 +50,7 @@ export const Login: React.FC = () => {
             <label className='block text-gray-700'>Password</label>
             <input
               {...register('password')}
-              className={`mt-1 p-2 w-full border bg-white ${
+              className={`mt-1 p-2 w-full border bg-white text-black ${
                 errors.password ? 'border-red-500' : 'border-gray-300'
               } rounded-lg`}
               type='password'
