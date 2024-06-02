@@ -81,3 +81,30 @@ def add_image_to_gallery(gallery_id: str, image: GalleryImage):
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         detail="Failed to add image to gallery",
     )
+
+
+def delete_image_from_gallery(gallery_id: str, image_id: str):
+    gallery_collection = get_gallery_collection()
+    gallery: Gallery = gallery_collection.find_one({"id": gallery_id})
+
+    for index, image in enumerate(gallery["images"]):
+        if image.id == image_id:
+            updated_gallery_images: List[GalleryImage] = gallery["images"]
+            updated_gallery_images.pop(index)
+            gallery["images"] = updated_gallery_images
+            gallery["updated_at"] = datetime.now(timezone.utc)
+            result = gallery_collection.update_one(
+                {"id": gallery_id}, {"$set": gallery}
+            )
+
+            if result.modified_count:
+                return {"detail": "Image deleted"}
+            else:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="Failed to update gallery",
+                )
+
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Image not found"
+        )

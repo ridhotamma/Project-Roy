@@ -34,3 +34,8 @@ async def delete_gallery(id: str):
 @router.post("/galleries/{gallery_id}/images", response_model=Gallery)
 async def add_image_to_gallery(gallery_id: str, image: GalleryImage):
     return crud_gallery.add_image_to_gallery(gallery_id, image)
+
+
+@router.put("/galleries/{gallery_id}/images/{image_id}", response_model=dict)
+async def remove_image_from_gallery(gallery_id: str, image_id: str):
+    return crud_gallery.delete_image_from_gallery(gallery_id, image_id)

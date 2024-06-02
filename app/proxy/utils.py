@@ -3,7 +3,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
 def is_proxy_usable(proxy):
-    test_url = "https://httpbin.org/ip"  # Simple API to test the proxy
+    test_url = "https://httpbin.org/ip"
     try:
         response = requests.get(
             test_url, proxies={"http": proxy, "https": proxy}, timeout=10
