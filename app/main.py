@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from fastapi.security import OAuth2PasswordBearer
 from starlette.exceptions import HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from app.lifespan import task_runner
 from app.routers import (
     user_ig,
@@ -33,6 +34,19 @@ app = FastAPI(
         "url": "http://www.apache.org/licenses/LICENSE-2.0.html",
     },
     lifespan=task_runner,
+)
+
+# CORS setup
+origins = [
+    "http://localhost",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
