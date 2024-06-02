@@ -4,7 +4,6 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.security import OAuth2PasswordBearer
 from starlette.exceptions import HTTPException
 from app.lifespan import task_runner
-
 from app.routers import (
     user_ig,
     user_ig_post,

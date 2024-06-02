@@ -10,7 +10,22 @@ venv/
 ENV/
 env/
 
-#log
+# log
 app.log
 /app.log
 ./app.log
+
+# Frontend build directory
+/frontend/build/
+/frontend/node_modules/
+
+# Dependency directories
+node_modules/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE-specific files
+.vscode/
+.idea/
