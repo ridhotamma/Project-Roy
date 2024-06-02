@@ -1,8 +1,10 @@
 version: '3.8'
 
 services:
-  app:
-    build: .
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: fastapi_app
     ports:
       - "8000:8000"
@@ -13,6 +15,17 @@ services:
       - MONGO_URL=mongodb://mongo:27017
     volumes:
       - .:/app
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongo
+      - redis
 
   mongo:
     image: mongo:latest
@@ -29,12 +42,26 @@ services:
       - "6379:6379"
 
   celery_worker:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: celery_worker
-    command: celery -A app.tasks.celery_app worker --loglevel=info
+    command: celery -A tasks.celery_app worker --loglevel=info
     depends_on:
       - redis
-      - app
+      - backend
+    volumes:
+      - .:/app
+
+  celery_beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: celery_beat
+    command: celery -A tasks.celery_app beat --loglevel=info
+    depends_on:
+      - redis
+      - backend
     volumes:
       - .:/app
 

@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, model_validator, field_validator
 from datetime import datetime, timezone
 from typing import Union, Optional
 from typing_extensions import Self
@@ -11,6 +11,7 @@ import uuid
 class UserIGSchedule(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     action_type: str = Field(..., pattern=r"^(post_content|post_story)$")
+    status_type: str = Field(..., pattern=r"^(success|failed|expired|unprocessed)$")
     title: Optional[str] = None
     description: Optional[str] = None
     scheduled_item: Union[UserIGPost, UserIGStory]
@@ -18,19 +19,24 @@ class UserIGSchedule(BaseModel):
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+    @field_validator("status_type")
+    @classmethod
+    def must_be_valid_status_type(self, value: str) -> str:
+        valid_status_type = ["success", "failed", "expired", "unprocessed"]
+        if value not in valid_status_type:
+            raise ValueError("status_type is not valid")
+
+        return value
+
     @model_validator(mode="after")
     def validate_scheduled_item(self) -> Self:
         action_type = self.action_type
         scheduled_item = self.scheduled_item
 
         if action_type == "post_content" and not isinstance(scheduled_item, UserIGPost):
-            raise ValueError(
-                "scheduled_item must be of type UserIGPost for post_content action"
-            )
+            raise ValueError("scheduled_item must be of type UserIGPost for post_content action")
         if action_type == "post_story" and not isinstance(scheduled_item, UserIGStory):
-            raise ValueError(
-                "scheduled_item must be of type UserIGStory for post_story action"
-            )
+            raise ValueError("scheduled_item must be of type UserIGStory for post_story action")
         return self
 
     @property
