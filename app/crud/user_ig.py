@@ -1,10 +1,8 @@
 from pymongo.errors import DuplicateKeyError
 from app.database import get_ig_user_collection
-from app.models.user_ig import UserIG, UserIGOut
+from app.models.user_ig import UserIG, UserIGOut, UserIGIn
 from app.models.common import PaginatedResponse, PaginationMetadata
 from fastapi import HTTPException, status
-from pymongo import ReturnDocument
-from datetime import datetime, timezone
 
 
 def create_user(user: UserIG):
@@ -16,6 +14,7 @@ def create_user(user: UserIG):
         raise HTTPException(status_code=400, detail="Username already exists")
     try:
         user_collection.insert_one(user.model_dump())
+
         return user
     except DuplicateKeyError:
         raise HTTPException(status_code=400, detail="Username already exists")
@@ -27,9 +26,7 @@ def get_users(skip: int = 0, limit: int = 10) -> PaginatedResponse:
     users_cursor = user_collection.find().skip(skip).limit(limit)
     current_page = skip // limit + 1
     users_result = [UserIGOut(**user) for user in users_cursor]
-    metadata = PaginationMetadata(
-        total=total, current_page=current_page, page_size=limit
-    )
+    metadata = PaginationMetadata(total=total, current_page=current_page, page_size=limit)
 
     return PaginatedResponse(metadata=metadata, data=users_result)
 
@@ -38,17 +35,31 @@ def get_user(username: str):
     user_collection = get_ig_user_collection()
     user = user_collection.find_one({"username": username})
     if user:
-        return UserIG(**user)
+        return UserIGOut(**user)
 
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
 
-def update_user(username: str, user: UserIGOut):
+def update_user(username: str, user: UserIGIn):
     user_collection = get_ig_user_collection()
-    result = user_collection.update_one({"username": username}, {"$set": user.dict()})
-    if result.matched_count:
-        return user
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    current_user = user_collection.find_one({"username": username})
+
+    if not current_user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+    current_user_model = UserIGIn(**current_user)
+
+    update_data = {}
+    for field, value in user.model_dump(exclude_unset=True).items():
+        if getattr(current_user_model, field) != value:
+            update_data[field] = value
+
+    if update_data:
+        result = user_collection.update_one({"username": username}, {"$set": update_data})
+        if result.matched_count:
+            return user_collection.find_one({"username": username})
+
+    return current_user
 
 
 def delete_user(username: str):
@@ -57,29 +68,3 @@ def delete_user(username: str):
     if result.deleted_count:
         return {"detail": "User deleted"}
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-
-
-def update_user_session(username: str, session_data: dict):
-    user_collection = get_ig_user_collection()
-    session = {
-        "uuids": session_data.get("uuids", {}),
-        "cookies": session_data.get("cookies", {}),
-        "last_login": session_data.get(
-            "last_login", datetime.now(timezone.utc).timestamp()
-        ),
-        "device_settings": session_data.get("device_settings", {}),
-        "user_agent": session_data.get("user_agent", ""),
-    }
-    update_data = {"session": session, "updated_at": datetime.now(timezone.utc)}
-
-    updated_user = user_collection.find_one_and_update(
-        {"username": username},
-        {"$set": update_data},
-        return_document=ReturnDocument.AFTER,
-    )
-    if not updated_user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"User with username '{username}' not found.",
-        )
-    return updated_user

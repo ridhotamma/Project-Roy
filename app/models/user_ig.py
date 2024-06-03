@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional, Dict, Any, Annotated
+from typing import Optional, Dict, Any, Annotated, Union
 from fastapi import Form
 import uuid
 
@@ -41,7 +41,8 @@ class Session(BaseModel):
 
 
 class UserIG(BaseModel):
-    user_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: Union[str, int] = Field(default_factory=lambda: str(uuid.uuid4()))
+    instagram_user_id: Union[str, int] = None
     username: str = Field(..., min_length=3, max_length=50)
     password: str = Field(..., min_length=6)
     proxy_url: Optional[str] = Field(None, pattern=r"^http://.*|https://.*")
@@ -82,10 +83,17 @@ class UserIG(BaseModel):
 
 
 class UserIGOut(BaseModel):
-    user_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    username: str = Field(..., min_length=3, max_length=50)
+    user_id: Any = Field(default_factory=lambda: str(uuid.uuid4()))
+    instagram_user_id: Any = None
+    username: Optional[str] = Field(None, min_length=3, max_length=50)
     proxy_url: Optional[str] = Field(None, pattern=r"^http://.*|https://.*")
     session: Optional[Session] = None
+
+
+class UserIGIn(BaseModel):
+    username: str = Field(None, min_length=3, max_length=50)
+    password: str = Field(None, min_length=6)
+    proxy_url: Optional[str] = Field(None, pattern=r"^http://.*|https://.*")
 
 
 class LoginRequest(BaseModel):
@@ -112,3 +120,7 @@ class CreateVideoStoryRequest(BaseModel):
 class GetUserRequest(BaseModel):
     user_id_target: str
     username_logged_in: str
+
+
+class SyncUserRequest(BaseModel):
+    username: str

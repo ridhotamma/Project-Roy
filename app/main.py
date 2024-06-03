@@ -79,12 +79,12 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     missing_fields = set()
 
     for error in exc.errors():
-        field = error["loc"][-1]
+        field = str(error["loc"][-1])
         message = f"{field.capitalize()} is Required"
         errors.append({"field": field, "message": message})
         missing_fields.add(field)
 
-    formatted_error_message = " and ".join(missing_fields) + " are required"
+    formatted_error_message = " , ".join(missing_fields) + " are required"
 
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,

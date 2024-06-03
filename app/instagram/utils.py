@@ -1,8 +1,12 @@
 import requests
 import os
 import uuid
-
+from datetime import datetime, timezone
+from fastapi.exceptions import HTTPException
+from fastapi import status
+from pymongo import ReturnDocument
 from app.logger.utils import logger
+from app.database import get_ig_user_collection
 
 
 def download_image(url, save_path):
@@ -12,9 +16,7 @@ def download_image(url, save_path):
             f.write(response.content)
         logger.info(f"[Download Image] Image downloaded to {save_path}")
     else:
-        raise Exception(
-            f"[Download Image] Failed to download image. Status code: {response.status_code}"
-        )
+        raise Exception(f"[Download Image] Failed to download image. Status code: {response.status_code}")
 
 
 def delete_image(file_path):
@@ -42,3 +44,28 @@ def generate_preview_url(data):
     preview_url = f"https://www.instagram.com/p/{code}/"
 
     return preview_url
+
+
+def update_user_session(username: str, session_data: dict):
+    user_collection = get_ig_user_collection()
+    session = {
+        "uuids": session_data.get("uuids", {}),
+        "cookies": session_data.get("cookies", {}),
+        "last_login": session_data.get("last_login", datetime.now(timezone.utc).timestamp()),
+        "device_settings": session_data.get("device_settings", {}),
+        "user_agent": session_data.get("user_agent", ""),
+    }
+    update_data = {"session": session, "updated_at": datetime.now(timezone.utc)}
+
+    updated_user = user_collection.find_one_and_update(
+        {"username": username},
+        {"$set": update_data},
+        return_document=ReturnDocument.AFTER,
+    )
+    if not updated_user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User with username '{username}' not found.",
+        )
+    logger.info(f"[{username}] Session updated")
+    return updated_user

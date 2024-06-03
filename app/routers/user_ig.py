@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Query
-from app.models.user_ig import UserIG, UserIGOut
+from app.models.user_ig import UserIG, UserIGOut, UserIGIn
 from app.models.common import PaginatedResponse
 from app.crud import user_ig as crud_user
 
@@ -22,7 +22,7 @@ async def get_instagram_user(username: str):
 
 
 @router.put("/ig-users/{username}", response_model=UserIGOut)
-async def update_instagram_user(username: str, user: UserIG):
+async def update_instagram_user(username: str, user: UserIGIn):
     return crud_user.update_user(username, user)
 
 
