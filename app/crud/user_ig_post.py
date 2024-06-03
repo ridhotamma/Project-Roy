@@ -18,7 +18,7 @@ def create_post(post: UserIGPost):
             detail=f"User {post.username} not found",
         )
     try:
-        post_collection.insert_one(post.dict())
+        post_collection.insert_one(post.model_dump())
         return post
     except DuplicateKeyError:
         raise HTTPException(status_code=400, detail="Post already exists")
@@ -31,9 +31,7 @@ def get_posts(skip: int = 0, limit: int = 10) -> PaginatedResponse:
     user_posts = [UserIGPost(**post) for post in user_posts_cursor]
     current_page = skip // limit + 1
 
-    metadata = PaginationMetadata(
-        total=total, current_page=current_page, page_size=limit
-    )
+    metadata = PaginationMetadata(total=total, current_page=current_page, page_size=limit)
 
     return PaginatedResponse(metadata=metadata, data=user_posts)
 
@@ -49,12 +47,24 @@ def get_post(username: str):
 
 def update_post(username: str, post: UserIGPost):
     post_collection = get_post_collection()
-    result = post_collection.update_one(
-        {"username": username}, {"$set": post.model_dump()}
-    )
-    if result.matched_count:
-        return post
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
+    current_post = post_collection.find_one({"username": username})
+
+    if not current_post:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
+
+    current_post_model = UserIGPost(**current_post)
+
+    update_data = {}
+    for field, value in post.model_dump(exclude_unset=True).items():
+        if getattr(current_post_model, field) != value:
+            update_data[field] = value
+
+    if update_data:
+        result = post_collection.update_one({"username": username}, {"$set": update_data})
+        if result.matched_count:
+            return post_collection.find_one({"username": username})
+
+    return current_post
 
 
 def delete_post(id: str):

@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from pydantic import BaseModel, Field
 from typing import Optional, Dict, Any, Annotated, Union
 from fastapi import Form
@@ -47,6 +48,8 @@ class UserIG(BaseModel):
     password: str = Field(..., min_length=6)
     proxy_url: Optional[str] = Field(None, pattern=r"^http://.*|https://.*")
     session: Optional[Session] = None
+    created_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     class Config:
         json_schema_extra = {
@@ -88,6 +91,8 @@ class UserIGOut(BaseModel):
     username: Optional[str] = Field(None, min_length=3, max_length=50)
     proxy_url: Optional[str] = Field(None, pattern=r"^http://.*|https://.*")
     session: Optional[Session] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
 
 class UserIGIn(BaseModel):

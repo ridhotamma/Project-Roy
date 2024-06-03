@@ -3,6 +3,7 @@ from app.database import get_story_collection
 from app.models.user_ig_story import UserIGStory
 from app.models.common import PaginatedResponse, PaginationMetadata
 from fastapi import HTTPException, status
+from datetime import datetime, timezone
 
 
 def create_story(story: UserIGStory):
@@ -21,9 +22,7 @@ def get_stories(skip: int = 0, limit: int = 10) -> PaginatedResponse:
     user_stories = [UserIGStory(**story) for story in user_stories_cursor]
     current_page = skip // limit + 1
 
-    metadata = PaginationMetadata(
-        total=total, current_page=current_page, page_size=limit
-    )
+    metadata = PaginationMetadata(total=total, current_page=current_page, page_size=limit)
 
     return PaginatedResponse(metadata=metadata, data=user_stories)
 
@@ -38,9 +37,24 @@ def get_story(id: str):
 
 def update_story(id: str, story: UserIGStory):
     story_collection = get_story_collection()
-    result = story_collection.update_one({"id": id}, {"$set": story.model_dump()})
+    current_story = story_collection.find_one({"id": id})
+    if not current_story:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Story not found")
+
+    updated_fields = {}
+    for key, value in story.model_dump(exclude_unset=True).items():
+        if current_story.get(key) != value:
+            updated_fields[key] = value
+
+    if not updated_fields:
+        return UserIGStory(**current_story)
+
+    updated_fields["updated_at"] = datetime.now(timezone.utc)
+    result = story_collection.update_one({"id": id}, {"$set": updated_fields})
     if result.matched_count:
-        return story
+        current_story.update(updated_fields)
+        return UserIGStory(**current_story)
+
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Story not found")
 
 

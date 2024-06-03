@@ -15,9 +15,7 @@ from app.config import ACCESS_TOKEN_EXPIRE_MINUTES
 def create_user(user: AuthUserIn) -> AuthUserIn:
     user_collection = get_auth_user_collection()
 
-    existing_user = user_collection.find_one(
-        {"$or": [{"email": user.email}, {"username": user.username}]}
-    )
+    existing_user = user_collection.find_one({"$or": [{"email": user.email}, {"username": user.username}]})
     if existing_user:
         raise ValueError("Username or email already exists")
 
@@ -33,9 +31,7 @@ def get_auth_users(skip: int, limit: int) -> PaginatedResponse:
     users = [AuthUserOut(**user) for user in users_cursor]
     current_page = skip // limit + 1
 
-    metadata = PaginationMetadata(
-        total=total, current_page=current_page, page_size=limit
-    )
+    metadata = PaginationMetadata(total=total, current_page=current_page, page_size=limit)
 
     return PaginatedResponse(metadata=metadata, data=users)
 
@@ -46,9 +42,7 @@ def authenticate_user(username: str, password: str) -> Optional[Dict[str, str]]:
     if not user or not verify_password(password, user["password"]):
         return None
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": user["username"]}, expires_delta=access_token_expires
-    )
+    access_token = create_access_token(data={"sub": user["username"]}, expires_delta=access_token_expires)
     refresh_token = create_refresh_token(data={"sub": user["username"]})
     return {
         "access_token": access_token,
@@ -62,25 +56,36 @@ def get_user_by_username(username: str) -> Optional[AuthUserIn]:
     user = user_collection.find_one({"username": username})
     if user:
         return AuthUserIn(**user)
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND, detail="Auth User not found"
-    )
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Auth User not found")
 
 
 def update_auth_user(username: str, user_update: AuthUserIn) -> Optional[AuthUserIn]:
     user_collection = get_auth_user_collection()
-    user_update["updated_at"] = datetime.now(timezone.utc)
+
+    current_user = user_collection.find_one({"username": username})
+    if not current_user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User with username '{username}' not found.",
+        )
+
+    modified_fields = {}
+    for key, value in user_update.model_dump(exclude_unset=True).items():
+        if current_user.get(key) != value:
+            modified_fields[key] = value
+
+    if not modified_fields:
+        return AuthUserIn(**current_user)
+
+    modified_fields["updated_at"] = datetime.now(timezone.utc)
+
     updated_user = user_collection.find_one_and_update(
         {"username": username},
-        {"$set": user_update},
+        {"$set": modified_fields},
         return_document=ReturnDocument.AFTER,
     )
-    if updated_user:
-        return AuthUserIn(**updated_user)
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail=f"User with username '{username}' not found.",
-    )
+
+    return AuthUserIn(**updated_user)
 
 
 def delete_auth_user(username: str):
@@ -88,6 +93,4 @@ def delete_auth_user(username: str):
     result = auth_user_collection.delete_one({"username": username})
     if result.deleted_count:
         return {"detail": "User deleted"}
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND, detail="Auth user Not Found"
-    )
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Auth user Not Found")
