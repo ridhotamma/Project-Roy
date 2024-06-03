@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, model_validator
 from datetime import datetime, timezone
-from typing import Union, Optional
+from typing import Union, Optional, Any
 from typing_extensions import Self
 from app.models.user_ig_post import UserIGPost
 from app.models.user_ig_story import UserIGStory
@@ -16,6 +16,7 @@ class UserIGSchedule(BaseModel):
     description: Optional[str] = None
     scheduled_item: Union[UserIGPost, UserIGStory]
     scheduled_time: datetime
+    error: Any = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 

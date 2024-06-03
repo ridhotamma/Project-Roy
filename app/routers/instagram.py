@@ -42,7 +42,7 @@ async def test_login_instagram(request: LoginRequest):
             content={
                 "status_code": status.HTTP_200_OK,
                 "message": "Login success",
-                "data": user.model_dump(),
+                "data": cl.get_settings(),
             },
         )
     except Exception as e:
