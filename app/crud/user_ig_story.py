@@ -1,5 +1,5 @@
 from pymongo.errors import DuplicateKeyError
-from app.database import get_story_collection
+from app.database import get_story_collection, get_ig_user_collection
 from app.models.user_ig_story import UserIGStory
 from app.models.common import PaginatedResponse, PaginationMetadata
 from fastapi import HTTPException, status
@@ -8,6 +8,15 @@ from datetime import datetime, timezone
 
 def create_story(story: UserIGStory):
     story_collection = get_story_collection()
+    user_collection = get_ig_user_collection()
+
+    user = user_collection.find_one({"username": story.username})
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User {story.username} not found",
+        )
+
     try:
         story_collection.insert_one(story.model_dump())
         return story

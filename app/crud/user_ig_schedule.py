@@ -1,5 +1,5 @@
 from pymongo.errors import DuplicateKeyError
-from app.database import get_schedule_collection
+from app.database import get_schedule_collection, get_ig_user_collection
 from app.models.user_ig_schedule import UserIGSchedule
 from app.models.common import PaginatedResponse, PaginationMetadata
 from fastapi import HTTPException, status
@@ -8,6 +8,17 @@ from datetime import datetime, timezone
 
 def create_schedule(schedule: UserIGSchedule):
     schedule_collection = get_schedule_collection()
+    user_collection = get_ig_user_collection()
+
+    username = schedule.scheduled_item.username
+    user = user_collection.find_one({"username": username})
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User {username} not found",
+        )
+
     try:
         schedule_collection.insert_one(schedule.model_dump())
         return schedule
