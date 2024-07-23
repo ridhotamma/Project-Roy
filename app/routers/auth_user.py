@@ -40,9 +40,7 @@ def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depen
 async def refresh_access_token(refresh_token: str = Header(...)):
     username = verify_token(refresh_token)
     access_token_expires = timedelta(minutes=30)
-    access_token = create_access_token(
-        data={"sub": username}, expires_delta=access_token_expires
-    )
+    access_token = create_access_token(data={"sub": username}, expires_delta=access_token_expires)
     return {"access_token": access_token, "token_type": "bearer"}
 
 

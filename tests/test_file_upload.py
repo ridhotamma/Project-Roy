@@ -17,9 +17,7 @@ def test_upload_file_success(access_token):
     )
 
     assert response.status_code == status.HTTP_201_CREATED
-    assert response.json() == {
-        "file_url": f"{AWS_CLOUDFRONT_DOMAIN_NAME}/test_file.txt"
-    }
+    assert response.json() == {"file_url": f"{AWS_CLOUDFRONT_DOMAIN_NAME}/test_file.txt"}
 
 
 def test_upload_file_failure():

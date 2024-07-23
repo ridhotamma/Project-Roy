@@ -1,16 +1,15 @@
-import { useEffect } from 'preact/hooks';
+import { LinkButton } from "../../components/button";
 
 export function Home() {
-  useEffect(() => {
-    fetch('http://localhost:8000/ping')
-      .then((response) => response.json())
-      .then((data) => console.log(data))
-      .catch((err) => console.error(err));
-  });
-
   return (
-    <div class='min-h-screen w-full flex justify-center items-center'>
-      <p class='text-center'>Index page</p>
+    <div class='min-h-screen flex flex-col gap-4 justify-center items-center'>
+      <h3 class='text-2xl mt-2'>ProjectRoy Home</h3>
+      <a
+        href={'/login'}
+        class='w-full bg-blue-500 text-white p-2 rounded-lg text-center'
+      >
+        Login
+      </a>
     </div>
   );
 }

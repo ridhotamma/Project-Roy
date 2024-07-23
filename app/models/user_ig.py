@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from pydantic import BaseModel, Field
-from typing import Optional, Dict, Any, Annotated, Union
+from typing import Optional, Dict, Any, Annotated
 from fastapi import Form
 import uuid
 
@@ -42,8 +42,8 @@ class Session(BaseModel):
 
 
 class UserIG(BaseModel):
-    user_id: Union[str, int] = Field(default_factory=lambda: str(uuid.uuid4()))
-    instagram_user_id: Union[str, int] = None
+    user_id: Any = Field(default_factory=lambda: str(uuid.uuid4()))
+    instagram_user_id: Any = None
     username: str = Field(..., min_length=3, max_length=50)
     password: str = Field(..., min_length=6)
     proxy_url: Optional[str] = Field(None, pattern=r"^http://.*|https://.*")

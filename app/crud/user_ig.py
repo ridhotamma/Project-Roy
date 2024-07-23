@@ -35,7 +35,7 @@ def get_user(username: str):
     user_collection = get_ig_user_collection()
     user = user_collection.find_one({"username": username})
     if user:
-        return UserIGOut(**user)
+        return UserIG(**user)
 
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 

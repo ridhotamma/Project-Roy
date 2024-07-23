@@ -46,5 +46,56 @@ Welcome to the **Social Media Post Automation** project! This tool is designed t
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/yourusername/your-repo-name.git
-   cd your-repo-name
+   git clone https://github.com/ridhotamma/Project-Roy.git
+   cd ./Project-Roy
+   ```
+
+2. **Project Setup**
+
+   Create a virtual environment for the backend FastAPI:
+
+   If on macOS/Linux:
+   ```bash
+   python3 -m venv venv
+   ```
+
+   If on Windows:
+   ```bash
+   python -m venv venv
+   ```
+
+   Install backend dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+   Install frontend dependencies:
+   ```bash
+   cd ./frontend
+   npm install
+   ```
+
+3. **How to run the project**
+
+   Run the backend:
+   ```bash
+   uvicorn app.main:app --reload
+   ```
+
+   Run the frontend:
+   ```bash
+   cd ./frontend && npm run dev
+   ```
+
+   If you are using macOS, just run using the Makefile:
+   ```bash
+   make start-dev
+   ```
+
+4. **Running with Docker**
+
+   Using Docker Compose:
+   ```bash
+   docker-compose up --build -d
+   ```
+```
