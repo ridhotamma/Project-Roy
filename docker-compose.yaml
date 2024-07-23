@@ -12,7 +12,7 @@ services:
       - mongo
       - redis
     environment:
-      - MONGO_URL=mongodb://mongo:27017
+      - MONGO_URL=mongodb://mongo:27017/example_db
     volumes:
       - .:/app
 
