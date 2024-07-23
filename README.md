@@ -64,6 +64,18 @@ Welcome to the **Social Media Post Automation** project! This tool is designed t
    python -m venv venv
    ```
 
+   Activate the virtual environment:
+
+   If on macOS/Linux:
+   ```bash
+   source venv/bin/activate
+   ```
+
+   If on Windows:
+   ```bash
+   .\venv\Scripts\activate
+   ```
+
    Install backend dependencies:
    ```bash
    pip install -r requirements.txt
@@ -98,4 +110,5 @@ Welcome to the **Social Media Post Automation** project! This tool is designed t
    ```bash
    docker-compose up --build -d
    ```
-```
+
+P.S. The frontend is still in progress. You can play around with the Swagger docs at [http://localhost:8000/docs](http://localhost:8000/docs).
