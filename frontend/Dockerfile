@@ -1,5 +1,5 @@
 # Use the official Node.js image as a parent image
-FROM node:14
+FROM node:16
 
 # Set the working directory in the container
 WORKDIR /app
@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 3000
 
 # Start the frontend application
-CMD ["npm", "start"]
+CMD ["npm", "run", "dev"]
